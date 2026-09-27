@@ -2,82 +2,66 @@
 import { useState, useEffect } from 'react';
 
 const plans = [
-  {id:'basic10',name:'$10',profit:'10%',days:10,invest:10,min:10},
-  {id:'silver100',name:'$100',profit:'12%',days:12,invest:100,min:100},
-  {id:'gold200',name:'$200',profit:'13%',days:12,invest:200,min:200},
-  {id:'diamond500',name:'$500',profit:'15%',days:15,invest:500,min:500},
+  {id:'basic10',price:10,profit:'10%',days:10,total:'100%',color:'#ffcc00',grad:'linear-gradient(135deg,#ffcc00,#ff9900)'},
+  {id:'silver100',price:100,profit:'12%',days:12,total:'144%',color:'#00d4ff',grad:'linear-gradient(135deg,#00d4ff,#0066ff)',popular:true},
+  {id:'gold200',price:200,profit:'13%',days:12,total:'156%',color:'#ff8a00',grad:'linear-gradient(135deg,#ff8a00,#ff3b00)'},
+  {id:'diamond500',price:500,profit:'15%',days:15,total:'225%',color:'#a855f7',grad:'linear-gradient(135deg,#a855f7,#6d28d9)'},
 ];
 
 export default function Home(){
   const [user,setUser]=useState(null);
   const [menu,setMenu]=useState(false);
-  const [investing,setInvesting]=useState(null);
+  const [loading,setLoading]=useState(null);
 
-  useEffect(()=>{
-    const u=JSON.parse(localStorage.getItem('user')||'null');
-    setUser(u);
-  },[]);
+  useEffect(()=>{ setUser(JSON.parse(localStorage.getItem('user')||'null')); },[]);
 
-  const invest = async (plan)=>{
+  const invest = async (p)=>{
     if(!user){ location.href='/auth'; return; }
-    setInvesting(plan.id);
-    try{
-      const res=await fetch('/api/invest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,plan_id:plan.id,amount:plan.invest})});
-      const d=await res.json();
-      if(d.success){ alert('✅ تم الاستثمار!'); location.href='/dashboard'; }
-      else alert(d.error||'خطأ');
-    }catch(e){ alert('خطأ في الاتصال'); }
-    setInvesting(null);
+    setLoading(p.id);
+    const r=await fetch('/api/invest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:user.id,plan_id:p.id,amount:p.price})});
+    const d=await r.json();
+    setLoading(null);
+    if(d.success) location.href='/dashboard';
+    else alert(d.error);
   }
 
   return(
-    <div style={{background:'#050508',minHeight:'100vh',color:'white',fontFamily:'system-ui'}}>
-      {/* هيدر - فيه بس زر القائمة */}
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 16px',background:'#0a0a0f',borderBottom:'1px solid #1a1a25',position:'sticky',top:0,zIndex:50}}>
-        <div style={{fontWeight:900,color:'#ffcc00'}}>CRYPTO GUY</div>
-        <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
-          {!user && <a href="/auth" style={{background:'#ffcc00',color:'#000',padding:'7px 14px',borderRadius:'8px',textDecoration:'none',fontWeight:800,fontSize:'13px'}}>دخول</a>}
-          <button onClick={()=>setMenu(!menu)} style={{background:'#1e1e28',border:'1px solid #2a2a35',color:'white',padding:'7px 12px',borderRadius:'8px',fontSize:'18px'}}>☰</button>
+    <div style={{background:'#060609',minHeight:'100vh',color:'white',fontFamily:'Inter,system-ui'}}>
+      {/* HEADER فخم */}
+      <div style={{position:'sticky',top:0,zIndex:50,background:'#060609F0',backdropFilter:'blur(20px)',borderBottom:'1px solid #ffffff08',padding:'12px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+          <div style={{width:'32px',height:'32px',background:'linear-gradient(135deg,#ffcc00,#ff9900)',borderRadius:'8px',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,color:'#000'}}>C</div>
+          <div style={{fontWeight:900,letterSpacing:'0.5px',fontSize:'15px'}}>CRYPTO <span style={{color:'#ffcc00'}}>GUY</span></div>
+        </div>
+        <div style={{display:'flex',gap:'8px'}}>
+          {!user ? <a href="/auth" style={{background:'#ffcc00',color:'#000',padding:'8px 16px',borderRadius:'20px',fontWeight:800,fontSize:'13px',textDecoration:'none'}}>دخول</a> : <a href="/dashboard" style={{background:'#ffffff10',border:'1px solid #ffffff15',color:'white',padding:'8px 14px',borderRadius:'20px',fontSize:'13px',textDecoration:'none'}}>لوحتي</a>}
+          <button onClick={()=>setMenu(!menu)} style={{width:'36px',height:'36px',background:'#ffffff08',border:'1px solid #ffffff10',borderRadius:'10px',color:'white'}}>☰</button>
         </div>
       </div>
 
-      {/* القائمة الجانبية - 4 ازرار فقط */}
-      {menu && (
-        <div style={{position:'fixed',inset:0,zIndex:100,display:'flex',justifyContent:'flex-end'}}>
-          <div onClick={()=>setMenu(false)} style={{flex:1,background:'#00000080',backdropFilter:'blur(2px)'}}></div>
-          <div style={{width:'280px',background:'#0f0f15',borderLeft:'1px solid #1e1e28',padding:'16px',display:'flex',flexDirection:'column',gap:'10px'}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'10px'}}>
-              <b>القائمة</b>
-              <button onClick={()=>setMenu(false)} style={{background:'#1e1e28',border:'none',color:'white',padding:'6px 10px',borderRadius:'6px'}}>✕</button>
-            </div>
-            <a href="/dashboard" style={{background:'#1e1e28',border:'1px solid #2a2a35',padding:'14px',borderRadius:'12px',color:'white',textDecoration:'none',textAlign:'right',fontWeight:700}}>📊 لوحتي الرئيسية</a>
-            <a href="/deposit" style={{background:'#00ff9415',border:'1px solid #00ff9440',padding:'14px',borderRadius:'12px',color:'#00ff94',textDecoration:'none',textAlign:'right',fontWeight:700}}>💰 الإيداع</a>
-            <a href="/withdraw" style={{background:'#ff3b3015',border:'1px solid #ff3b3040',padding:'14px',borderRadius:'12px',color:'#ff8a7a',textDecoration:'none',textAlign:'right',fontWeight:700}}>💸 السحب</a>
-            <a href="/referral" style={{background:'#ffcc0015',border:'1px solid #ffcc0040',padding:'14px',borderRadius:'12px',color:'#ffcc00',textDecoration:'none',textAlign:'right',fontWeight:800}}>🔗 الإحالة - 10%</a>
-            {!user && <a href="/auth" style={{marginTop:'10px',background:'#ffcc00',color:'#000',padding:'12px',borderRadius:'10px',textAlign:'center',textDecoration:'none',fontWeight:900}}>تسجيل دخول</a>}
+      {/* MENU */}
+      {menu && <div style={{position:'fixed',inset:0,zIndex:100,display:'flex',justifyContent:'flex-end'}}>
+        <div onClick={()=>setMenu(false)} style={{flex:1,background:'#00000060',backdropFilter:'blur(4px)'}}></div>
+        <div style={{width:'300px',background:'#0d0d12',borderLeft:'1px solid #ffffff08',padding:'20px'}}>
+          <button onClick={()=>setMenu(false)} style={{float:'left',background:'none',border:'none',color:'#666',fontSize:'20px'}}>✕</button>
+          <div style={{marginTop:'40px',display:'flex',flexDirection:'column',gap:'8px'}}>
+            <a href="/dashboard" style={mItem}>📊 لوحتي</a>
+            <a href="/deposit" style={mItem}>💳 الإيداع</a>
+            <a href="/withdraw" style={mItem}>💸 السحب</a>
+            <a href="/referral" style={{...mItem,background:'#ffcc0010',border:'1px solid #ffcc0020',color:'#ffcc00'}}>🔗 الإحالة 10%</a>
           </div>
         </div>
-      )}
+      </div>}
 
-      {/* باقات الاستثمار */}
-      <div style={{maxWidth:'420px',margin:'0 auto',padding:'16px'}}>
-        <h2 style={{textAlign:'center',fontSize:'18px',margin:'18px 0 6px'}}>💎 باقات الاستثمار</h2>
-        <p style={{textAlign:'center',color:'#666',fontSize:'12px',marginBottom:'16px'}}>اختر الباقة وابدأ الربح اليومي</p>
-
-        <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
-          {plans.map(p=>(
-            <div key={p.id} style={{background:'#111119',border:'1px solid #1e1e28',borderRadius:'16px',padding:'16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-              <div>
-                <div style={{fontWeight:900,fontSize:'18px'}}>{p.name}</div>
-                <div style={{fontSize:'12px',color:'#888',marginTop:'4px'}}>{p.profit} يومي لمدة {p.days} يوم</div>
-              </div>
-              <button onClick={()=>invest(p)} disabled={investing===p.id} style={{background:'#ffcc00',color:'#000',border:'none',padding:'10px 18px',borderRadius:'10px',fontWeight:900,cursor:'pointer'}}>
-                {investing===p.id?'⏳':'استثمار'}
-              </button>
-            </div>
-          ))}
-        </div>
+      {/* HERO */}
+      <div style={{maxWidth:'480px',margin:'0 auto',padding:'32px 16px 16px',textAlign:'center'}}>
+        <div style={{display:'inline-block',background:'#ffcc0010',border:'1px solid #ffcc0020',color:'#ffcc00',fontSize:'10px',padding:'6px 12px',borderRadius:'20px',letterSpacing:'1px',fontWeight:700}}>🔥 عائد يومي مضمون</div>
+        <h1 style={{fontSize:'28px',fontWeight:900,lineHeight:'1.2',margin:'16px 0 8px'}}>استثمر بذكاء،<br/><span style={{background:'linear-gradient(90deg,#ffcc00,#ff9900)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>اربح يومياً</span></h1>
+        <p style={{color:'#666',fontSize:'13px'}}>خطط استثمارية مدروسة بعوائد ثابتة</p>
       </div>
-    </div>
-  )
-            }
+
+      {/* PLANS فخمة */}
+      <div style={{maxWidth:'480px',margin:'0 auto',padding:'0 16px 40px',display:'flex',flexDirection:'column',gap:'14px'}}>
+        {plans.map(p=>(
+          <div key={p.id} style={{position:'relative',background:'#111116',border:p.popular?'1px solid #ffcc0030':'1px solid #ffffff08',borderRadius:'20px',padding:'18px',overflow:'hidden'}}>
+            {p.popular && <div style={{position:'absolute',top:'12px',left:'12px',background:p.grad,color:'#fff',fontSize:'9px',padding:'4px 8px',borderRadius:'20px',fontWeight:800,letterSpacing:'
