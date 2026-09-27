@@ -1,232 +1,99 @@
 'use client';
+import { useState, useEffect } from 'react';
 
-import { useState } from 'react';
-import Link from 'next/link';
+export default function Home(){
+  const [user,setUser]=useState(null);
+  useEffect(()=>{ try{setUser(JSON.parse(localStorage.getItem('user')||'null'))}catch{} },[]);
 
-export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const packages = [
-    {
-      amount: 10,
-      daily: 10,
-      days: 10,
-      total: 100,
-      badge: null,
-    },
-    {
-      amount: 100,
-      daily: 12,
-      days: 12,
-      total: 144,
-      badge: 'الأكثر طلباً',
-    },
-    {
-      amount: 200,
-      daily: 13,
-      days: 13,
-      total: 338,
-      badge: null,
-    },
-    {
-      amount: 500,
-      daily: 15,
-      days: 15,
-      total: 1125,
-      badge: 'VIP',
-    },
-  ];
-
-  const menuItems = [
-    { label: 'لوحتي', href: '/dashboard', highlight: false },
-    { label: 'الإيداع', href: '/deposit', highlight: false },
-    { label: 'السحب', href: '/withdraw', highlight: false },
-    { label: 'الإحالة 10%', href: '/referral', highlight: true },
-  ];
-
-  return (
-    <div className="min-h-screen bg-[#08080a] text-white font-inter overflow-x-hidden">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#08080a]/70 border-b border-white/5">
-        <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ffcc00] to-[#b38f00] flex items-center justify-center font-bold text-black text-lg shadow-lg shadow-[#ffcc00]/20">
-              C
-            </div>
-            <span className="text-xl font-bold tracking-tight">
-              CRYPTO <span className="text-[#ffcc00]">GUY</span>
-            </span>
-          </Link>
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="hidden sm:block px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffcc00]/40 hover:bg-[#ffcc00]/5 transition-all text-sm font-medium"
-            >
-              لوحتي
-            </Link>
-            <button
-              onClick={() => setMenuOpen(true)}
-              className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 hover:border-[#ffcc00]/40 hover:bg-[#ffcc00]/5 transition-all flex items-center justify-center"
-              aria-label="Open menu"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
-          </div>
+  return(
+    <div dir="rtl" style={{background:'#1e1408',minHeight:'100vh',color:'#fff',fontFamily:'system-ui',paddingBottom:80}}>
+      
+      {/* هيدر */}
+      <div style={{background:'#2a1e0f',height:56,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 14px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <div style={{width:36,height:36,background:'#ffcc00',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,color:'#000',fontSize:20}}>1M</div>
+          <div style={{fontWeight:800}}>OneMiners</div>
         </div>
-      </header>
-
-      {/* Overlay */}
-      <div
-        onClick={() => setMenuOpen(false)}
-        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
-          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-      />
-
-      {/* Side Menu */}
-      <aside
-        className={`fixed top-0 right-0 h-full w-[300px] z-[70] bg-[#131318]/95 backdrop-blur-2xl border-l border-white/10 transform transition-transform duration-500 ease-out ${
-          menuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="p-6 flex flex-col h-full">
-          {/* Close Button */}
-          <div className="flex items-center justify-between mb-10">
-            <span className="text-sm font-medium text-white/40 tracking-widest uppercase">القائمة</span>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center"
-              aria-label="Close menu"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Menu Items */}
-          <nav className="flex flex-col gap-3">
-            {menuItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={`px-5 py-4 rounded-xl text-base font-medium transition-all border ${
-                  item.highlight
-                    ? 'bg-gradient-to-r from-[#ffcc00]/20 to-[#ffcc00]/5 border-[#ffcc00]/40 text-[#ffcc00] hover:from-[#ffcc00]/30'
-                    : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10 hover:text-white hover:border-white/20'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Footer */}
-          <div className="mt-auto pt-6 border-t border-white/5">
-            <p className="text-xs text-white/30 text-center">© 2025 CRYPTO GUY</p>
-          </div>
+        <div style={{display:'flex',gap:8}}>
+          <div style={{background:'#3a2a14',padding:'6px 12px',borderRadius:20,fontSize:12}}>🌐 عربي</div>
         </div>
-      </aside>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-5 py-14 md:py-20">
-        {/* Title */}
-        <div className="text-center mb-14">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
-            باقات الاستثمار <span className="text-[#ffcc00]">المميزة</span>
-          </h1>
-          <p className="mt-5 text-white/50 text-base md:text-lg max-w-xl mx-auto">
-            اختر الباقة المناسبة وابدأ رحلة الأرباح اليومية فوراً
-          </p>
+      <div style={{padding:12}}>
+        {/* بانر */}
+        <div style={{background:'linear-gradient(90deg,#ffcc00,#ff9a00)',borderRadius:16,height:120,display:'flex',alignItems:'center',justifyContent:'center',position:'relative',overflow:'hidden'}}>
+          <div style={{fontSize:60,fontWeight:900,color:'#000',opacity:0.2,position:'absolute'}}>1M 1M 1M</div>
+          <div style={{width:90,height:90,background:'#000',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:50,fontWeight:900,zIndex:2,border:'4px solid #fff'}}>
+            <span style={{color:'#ffcc00'}}>1</span><span style={{color:'#fff'}}>M</span>
+          </div>
+          <div style={{position:'absolute',bottom:10,zIndex:2,fontSize:28,fontWeight:900,color:'#000'}}>one<span style={{color:'#fff'}}>miners</span></div>
         </div>
 
-        {/* Packages Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-          {packages.map((pkg, i) => (
-            <div
-              key={i}
-              className="relative group"
-            >
-              {/* Badge */}
-              {pkg.badge && (
-                <div className="absolute -top-3 right-6 z-10">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider bg-gradient-to-r from-[#ffcc00] to-[#e6b800] text-black shadow-lg shadow-[#ffcc00]/30">
-                    {pkg.badge}
-                  </span>
-                </div>
-              )}
+        {/* كرت الرصيد */}
+        <div style={{background:'#2f2412',borderRadius:16,padding:14,marginTop:12}}>
+          <div style={{background:'#3d2f1a',borderRadius:12,padding:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <span style={{color:'#c9a86a',fontSize:13}}>إجمالي الأصول</span>
+            <span style={{color:'#ffcc00',fontSize:20,fontWeight:900}}>$1.00</span>
+          </div>
+          <div style={{marginTop:12,display:'flex',flexDirection:'column',gap:8,fontSize:13}}>
+            <div style={{display:'flex',justifyContent:'space-between'}}><span>محفظة الاستثمار</span><span>$ 0.00</span></div>
+            <div style={{display:'flex',justifyContent:'space-between'}}><span>محفظة الوساطة</span><span>$ 0.00</span></div>
+          </div>
+        </div>
 
-              <div className="relative rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/10 p-6 md:p-7 hover:border-[#ffcc00]/40 hover:bg-white/[0.05] transition-all duration-300 h-full">
-                {/* Gold accent line */}
-                <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#ffcc00]/60 to-transparent" />
+        {/* شبكة الايقونات */}
+        <div style={{background:'#2f2412',borderRadius:16,padding:14,marginTop:12}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr',gap:12}}>
+            <Item icon="$" text="إعادة الشحن" href="/deposit" />
+            <Item icon="💰" text="ينسحب" href="/withdraw" />
+            <Item icon="♛" text="كبار الشخصيات" href="/vip" />
+            <Item icon="★" text="نشاط" href="/activity" />
+            <Item icon="?" text="التعليمات" href="/help" />
+            <Item icon="✉" text="يدعو" href="/referral" />
+            <Item icon="i" text="معلومات عنا" href="/about" />
+            <Item icon="⬇" text="برنامج" href="/app" />
+          </div>
+        </div>
 
-                <div className="flex items-start justify-between mb-5">
-                  <div>
-                    <p className="text-xs text-white/40 tracking-widest uppercase mb-2">الباقة</p>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl md:text-5xl font-bold text-[#ffcc00]">${pkg.amount}</span>
-                    </div>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-[#ffcc00]/10 border border-[#ffcc00]/20 flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                      <polyline points="17 6 23 6 23 12" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Details */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="rounded-xl bg-[#131318] border border-white/5 p-3.5">
-                    <p className="text-[11px] text-white/40 mb-1">الربح اليومي</p>
-                    <p className="text-lg font-bold text-white">
-                      {pkg.daily}% <span className="text-xs text-[#ffcc00] font-normal">يومياً</span>
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-[#131318] border border-white/5 p-3.5">
-                    <p className="text-[11px] text-white/40 mb-1">المدة</p>
-                    <p className="text-lg font-bold text-white">
-                      {pkg.days} <span className="text-xs text-white/50 font-normal">يوم</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Total */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/5 mb-5">
-                  <span className="text-sm text-white/50">إجمالي العائد</span>
-                  <span className="text-xl font-bold text-[#ffcc00]">${pkg.total}</span>
-                </div>
-
-                {/* CTA */}
-                <Link
-                  href="/deposit"
-                  className="block w-full text-center py-3.5 rounded-xl bg-gradient-to-r from-[#ffcc00] to-[#e6b800] text-black font-bold text-sm hover:from-[#ffd633] hover:to-[#ffcc00] transition-all shadow-lg shadow-[#ffcc00]/20"
-                >
-                  ابدأ الاستثمار
-                </Link>
+        {/* الباقات */}
+        <div style={{marginTop:16}}>
+          <div style={{fontWeight:800,marginBottom:10,fontSize:14}}>باقات الاستثمار</div>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {[
+              {p:10,per:'10%',d:10},
+              {p:100,per:'12%',d:12,best:true},
+              {p:200,per:'13%',d:12},
+              {p:500,per:'15%',d:15},
+            ].map(pl=>(
+              <div key={pl.id||pl.p} style={{background:'#2f2412',border:pl.best?'1px solid #ffcc00':'1px solid #3d2f1a',borderRadius:12,padding:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div><div style={{fontWeight:900}}>${pl.p}</div><div style={{fontSize:11,color:'#c9a86a'}}>{pl.per} يومي • {pl.d} يوم</div></div>
+                <a href={user?'/dashboard':'/auth'} style={{background:'#ffcc00',color:'#000',padding:'8px 16px',borderRadius:8,textDecoration:'none',fontWeight:800,fontSize:12}}>استثمار</a>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </main>
+      </div>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 mt-10">
-        <div className="max-w-6xl mx-auto px-5 py-8 text-center">
-          <p className="text-sm text-white/30">
-            © 2025 <span className="text-[#ffcc00]">CRYPTO GUY</span> — جميع الحقوق محفوظة
-          </p>
-        </div>
-      </footer>
+      {/* قائمة سفلية */}
+      <div style={{position:'fixed',bottom:0,left:0,right:0,background:'#2a1e0f',borderTop:'1px solid #3d2f1a',display:'flex',justifyContent:'space-around',padding:'8px 0'}}>
+        <Nav icon="⌂" text="بيت" active />
+        <Nav icon="♛" text="كبار الشخصيات" />
+        <Nav icon="⛏" text="تجمع التعدين" />
+        <Nav icon="👥" text="فريق" />
+        <Nav icon="👤" text="أنا" />
+      </div>
     </div>
   );
-                }
+}
+
+function Item({icon,text,href}){
+  return(
+    <a href={href} style={{textDecoration:'none',color:'#fff',textAlign:'center'}}>
+      <div style={{width:42,height:42,background:'#4a3a22',borderRadius:'50%',margin:'0 auto 6px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{icon}</div>
+      <div style={{fontSize:10,color:'#d6c19a',lineHeight:1.2}}>{text}</div>
+    </a>
+  );
+}
+function Nav({icon,text,active}){
+  return <div style={{textAlign:'center',color:active?'#ffcc00':'#8a7560'}}><div style={{fontSize:18}}>{icon}</div><div style={{fontSize:9,marginTop:2}}>{text}</div></div>;
+                      }
