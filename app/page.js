@@ -1,50 +1,57 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-
-const plans = [
-  {
-    name: "VIP 1",
-    price: "$10",
-    min: "$10",
-    daily: "$1",
-    period: "30 يوم",
-    total: "$30",
-  },
-  {
-    name: "VIP 2",
-    price: "$20",
-    min: "$20",
-    daily: "$2.50",
-    period: "30 يوم",
-    total: "$75",
-    popular: true,
-  },
-  {
-    name: "VIP 3",
-    price: "$50",
-    min: "$50",
-    daily: "$5",
-    period: "30 يوم",
-    total: "$150",
-  },
-  {
-    name: "VIP 4",
-    price: "$100",
-    min: "$100",
-    daily: "$12",
-    period: "30 يوم",
-    total: "$360",
-  },
-];
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
 
+  const plans = [
+    {
+      name: "VIP 1",
+      price: "$10",
+      minimum: "$10",
+      daily: "$1",
+      duration: "30 يوم",
+      total: "$30",
+    },
+    {
+      name: "VIP 2",
+      price: "$20",
+      minimum: "$20",
+      daily: "$2.50",
+      duration: "30 يوم",
+      total: "$75",
+      popular: true,
+    },
+    {
+      name: "VIP 3",
+      price: "$50",
+      minimum: "$50",
+      daily: "$5",
+      duration: "30 يوم",
+      total: "$150",
+    },
+    {
+      name: "VIP 4",
+      price: "$100",
+      minimum: "$100",
+      daily: "$12",
+      duration: "30 يوم",
+      total: "$360",
+    },
+  ];
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   return (
-    <main dir="rtl" className="page">
+    <main className="page" dir="rtl">
 
       {/* ================= HEADER ================= */}
 
@@ -67,122 +74,13 @@ export default function Home() {
       </header>
 
 
-      {/* ================= OVERLAY ================= */}
-
-      {menuOpen && (
-        <div
-          className="overlay"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
-
-      {/* ================= SIDEBAR ================= */}
-
-      <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
-
-        <div className="sidebarHeader">
-
-          <div className="sideLogo">
-            Crypto Guys
-          </div>
-
-          <button
-            className="closeButton"
-            onClick={() => setMenuOpen(false)}
-          >
-            ×
-          </button>
-
-        </div>
-
-
-        <nav>
-
-          <Link
-            href="/referral"
-            className="sideLink active"
-            onClick={() => setMenuOpen(false)}
-          >
-            الإحالة
-          </Link>
-
-
-          <Link
-            href="/deposit"
-            className="sideLink"
-            onClick={() => setMenuOpen(false)}
-          >
-            الإيداع والشحن
-          </Link>
-
-
-          <Link
-            href="/withdraw"
-            className="sideLink"
-            onClick={() => setMenuOpen(false)}
-          >
-            السحب
-          </Link>
-
-
-          {/* WALLET */}
-
-          <button
-            className={`walletButton ${walletOpen ? "selected" : ""}`}
-            onClick={() => setWalletOpen(!walletOpen)}
-          >
-            <span>المحفظة</span>
-
-            <span className="arrow">
-              {walletOpen ? "⌃" : "⌄"}
-            </span>
-          </button>
-
-
-          {walletOpen && (
-            <div className="walletMenu">
-
-              <Link
-                href="/wallet"
-                className="walletLink"
-                onClick={() => setMenuOpen(false)}
-              >
-                المحفظة الأساسية
-              </Link>
-
-              <Link
-                href="/wallet"
-                className="walletLink"
-                onClick={() => setMenuOpen(false)}
-              >
-                محفظة الوساطة
-              </Link>
-
-            </div>
-          )}
-
-
-          <Link
-            href="/about"
-            className="sideLink"
-            onClick={() => setMenuOpen(false)}
-          >
-            معلومات عنا
-          </Link>
-
-        </nav>
-
-      </aside>
-
-
       {/* ================= CONTENT ================= */}
 
       <section className="content">
 
         <div className="plans">
 
-          {plans.map((plan) => (
+          {plans.map((plan, index) => (
 
             <article
               className={`plan ${plan.popular ? "popular" : ""}`}
@@ -196,87 +94,59 @@ export default function Home() {
               )}
 
 
-              {/* LEFT / PRICE */}
+              {/* البطاقة الرئيسية */}
 
-              <div className="planMain">
+              <div className="planBody">
 
-                <div className="vipName">
-                  {plan.name}
-                </div>
+                {/* جهة VIP والسعر */}
 
-                <div className="price">
-                  {plan.price}
-                </div>
+                <div className="planIdentity">
 
-              </div>
+                  <div className="vipName">
+                    {plan.name}
+                  </div>
 
-
-              {/* RIGHT / DETAILS */}
-
-              <div className="details">
-
-                <div className="detailRow">
-
-                  <span className="value">
-                    {plan.min}
-                  </span>
-
-                  <span className="label">
-                    الحد الأدنى
-                  </span>
+                  <div className="bigPrice">
+                    {plan.price}
+                  </div>
 
                 </div>
 
 
-                <div className="detailRow">
+                {/* جهة التفاصيل */}
 
-                  <span className="value">
-                    {plan.daily}
-                  </span>
+                <div className="details">
 
-                  <span className="label">
-                    الربح اليومي
-                  </span>
+                  <div className="detailRow">
+                    <span>الحد الأدنى</span>
+                    <strong>{plan.minimum}</strong>
+                  </div>
 
-                </div>
+                  <div className="detailRow">
+                    <span>الربح اليومي</span>
+                    <strong>{plan.daily}</strong>
+                  </div>
 
+                  <div className="detailRow">
+                    <span>المدى</span>
+                    <strong>{plan.duration}</strong>
+                  </div>
 
-                <div className="detailRow">
-
-                  <span className="value period">
-                    {plan.period}
-                  </span>
-
-                  <span className="label">
-                    المدى
-                  </span>
-
-                </div>
-
-
-                <div className="detailRow totalRow">
-
-                  <span className="value">
-                    {plan.total}
-                  </span>
-
-                  <span className="label">
-                    إجمالي الربح
-                  </span>
+                  <div className="detailRow totalRow">
+                    <span>إجمالي الربح</span>
+                    <strong>{plan.total}</strong>
+                  </div>
 
                 </div>
 
               </div>
 
 
-              {/* INVEST */}
+              {/* زر الاستثمار */}
 
-              <Link
-                href="/deposit"
-                className="investButton"
-              >
+              <button className="investButton">
                 استثمار
-              </Link>
+              </button>
 
             </article>
 
@@ -287,101 +157,227 @@ export default function Home() {
       </section>
 
 
-      {/* ================= CSS ================= */}
+      {/* ================= OVERLAY ================= */}
 
-      <style jsx>{`
+      <div
+        className={`overlay ${menuOpen ? "show" : ""}`}
+        onClick={() => setMenuOpen(false)}
+      ></div>
+
+
+      {/* ================= SIDEBAR ================= */}
+
+      <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
+
+        <div className="sidebarHeader">
+
+          <div className="sidebarLogo">
+            Crypto Guys
+          </div>
+
+          <button
+            className="closeButton"
+            onClick={() => setMenuOpen(false)}
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <nav className="navigation">
+
+          <a href="/referral">
+            الإحالة
+          </a>
+
+          <a href="/deposit">
+            الإيداع والشحن
+          </a>
+
+          <a href="/withdraw">
+            السحب
+          </a>
+
+
+          {/* المحفظة */}
+
+          <button
+            className={`walletButton ${
+              walletOpen ? "active" : ""
+            }`}
+            onClick={() => setWalletOpen(!walletOpen)}
+          >
+            <span>المحفظة</span>
+
+            <span className="arrow">
+              {walletOpen ? "⌃" : "⌄"}
+            </span>
+          </button>
+
+
+          <div
+            className={`walletMenu ${
+              walletOpen ? "walletShow" : ""
+            }`}
+          >
+
+            <a href="/wallet">
+              المحفظة الأساسية
+            </a>
+
+            <a href="/wallet">
+              محفظة الوساطة
+            </a>
+
+          </div>
+
+
+          <a href="/about">
+            معلومات عنا
+          </a>
+
+        </nav>
+
+      </aside>
+
+
+      {/* ================= STYLE ================= */}
+
+      <style jsx global>{`
 
         * {
           box-sizing: border-box;
         }
 
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body {
+          margin: 0;
+          background: #050505;
+          color: white;
+          font-family:
+            Arial,
+            Tahoma,
+            sans-serif;
+        }
+
+        button,
+        a {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+
+        /* ================= PAGE ================= */
 
         .page {
           min-height: 100vh;
           background:
             radial-gradient(
-              circle at 50% -10%,
-              #191919 0%,
-              #090909 45%,
-              #050505 100%
-            );
+              circle at 50% 0%,
+              rgba(240, 200, 77, 0.045),
+              transparent 32%
+            ),
+            #050505;
 
-          color: white;
           overflow-x: hidden;
         }
 
 
-        /* HEADER */
+        /* ================= HEADER ================= */
 
         .header {
           height: 96px;
 
           width: 100%;
 
-          position: sticky;
-          top: 0;
-
-          z-index: 1000;
+          position: relative;
 
           display: flex;
           align-items: center;
           justify-content: center;
 
-          background: rgba(5,5,5,.96);
+          background: #070707;
 
           border-bottom:
-            1px solid #303030;
+            1px solid #292929;
+
+          z-index: 100;
+        }
+
+
+        .header::after {
+          content: "";
+
+          position: absolute;
+
+          bottom: -1px;
+          left: 0;
+
+          width: 55%;
+          height: 2px;
+
+          background:
+            linear-gradient(
+              90deg,
+              transparent,
+              #f0c84d,
+              transparent
+            );
+
+          opacity: .65;
         }
 
 
         .logo {
-          color: #f2c94c;
+          color: #f0c84d;
 
           font-family:
             Georgia,
             "Times New Roman",
             serif;
 
-          font-size: 42px;
+          font-size: 43px;
 
-          font-weight: 700;
+          font-weight: 800;
+
+          letter-spacing: -1px;
 
           direction: ltr;
 
           text-shadow:
-            0 0 18px rgba(242,201,76,.12);
+            0 0 12px
+            rgba(240, 200, 77, .08);
         }
 
 
-        /* MENU */
+        /* ================= MENU BUTTON ================= */
 
         .menuButton {
           position: absolute;
 
           left: 24px;
 
-          top: 17px;
+          top: 19px;
 
           width: 62px;
-          height: 62px;
+          height: 58px;
 
-          border-radius: 13px;
+          border-radius: 12px;
+
+          background: #101010;
 
           border:
             1px solid #444;
-
-          background:
-            linear-gradient(
-              145deg,
-              #151515,
-              #090909
-            );
 
           display: flex;
 
           flex-direction: column;
 
           align-items: center;
+
           justify-content: center;
 
           gap: 7px;
@@ -391,111 +387,126 @@ export default function Home() {
 
 
         .menuButton span {
-          width: 32px;
+          display: block;
+
+          width: 31px;
           height: 4px;
 
           border-radius: 5px;
 
-          background: #f2c94c;
+          background: #f0c84d;
+
+          box-shadow:
+            0 0 5px
+            rgba(240, 200, 77, .15);
         }
 
 
-        /* CONTENT */
+        /* ================= CONTENT ================= */
 
         .content {
           width: 100%;
 
-          max-width: 1100px;
+          max-width: 1080px;
 
           margin: 0 auto;
 
           padding:
-            34px 28px 80px;
+            38px 28px 80px;
         }
 
 
         .plans {
+          width: 100%;
+
           display: flex;
 
           flex-direction: column;
 
-          gap: 38px;
+          gap: 26px;
         }
 
 
-        /* CARD */
+        /* ================= CARD ================= */
 
         .plan {
           position: relative;
 
           width: 100%;
 
-          min-height: 305px;
-
-          padding: 34px 34px 24px;
-
-          display: grid;
-
-          grid-template-columns:
-            38% 62%;
-
-          grid-template-rows:
-            auto auto;
-
-          column-gap: 0;
+          min-height: 300px;
 
           background:
             linear-gradient(
-              135deg,
-              #111,
-              #171717 55%,
+              145deg,
+              #171717,
               #0d0d0d
             );
 
           border:
-            1px solid #3b3b3b;
+            1px solid #383838;
 
-          border-radius: 21px;
+          border-radius: 22px;
 
-          box-shadow:
-            0 12px 35px
-            rgba(0,0,0,.45);
+          padding:
+            26px 28px 23px;
 
           overflow: hidden;
+
+          box-shadow:
+            0 15px 40px
+            rgba(0,0,0,.40);
+
+          transition:
+            transform .2s ease,
+            border-color .2s ease;
         }
 
 
-        /* GOLD LINE */
+        .plan:hover {
+          border-color: #555;
+
+          transform:
+            translateY(-2px);
+        }
+
+
+        /* لمعة خفيفة */
 
         .plan::before {
           content: "";
 
           position: absolute;
 
-          top: 0;
-          bottom: 0;
-          left: 37.8%;
+          top: -100px;
+          left: -120px;
 
-          width: 1px;
+          width: 230px;
+          height: 320px;
 
           background:
             linear-gradient(
+              120deg,
               transparent,
-              #484848,
+              rgba(240,200,77,.12),
               transparent
             );
+
+          transform: rotate(18deg);
+
+          pointer-events: none;
         }
 
 
-        /* POPULAR */
+        /* ================= POPULAR ================= */
 
         .plan.popular {
           border:
-            4px solid #f2c94c;
+            4px solid #f0c84d;
 
           box-shadow:
             0 0 22px
-            rgba(242,201,76,.12);
+            rgba(240,200,77,.14);
         }
 
 
@@ -503,18 +514,14 @@ export default function Home() {
           position: absolute;
 
           top: -1px;
-          left: 28px;
+          left: 30px;
 
-          padding:
-            9px 20px;
-
-          min-width: 190px;
-
-          text-align: center;
-
-          background: #f2c94c;
+          background: #f0c84d;
 
           color: #080808;
+
+          padding:
+            10px 24px;
 
           border-radius:
             0 0 13px 13px;
@@ -524,9 +531,9 @@ export default function Home() {
             "Times New Roman",
             serif;
 
-          font-size: 17px;
+          font-size: 16px;
 
-          font-weight: bold;
+          font-weight: 800;
 
           direction: ltr;
 
@@ -534,45 +541,68 @@ export default function Home() {
         }
 
 
-        /* PLAN MAIN */
+        /* ================= CARD BODY ================= */
 
-        .planMain {
-          grid-column: 1;
+        .planBody {
 
-          grid-row: 1;
+          width: 100%;
+
+          min-height: 210px;
+
+          display: grid;
+
+          grid-template-columns:
+            38% 62%;
+
+          direction: ltr;
+
+          align-items: stretch;
+        }
+
+
+        /* ================= VIP SIDE ================= */
+
+        .planIdentity {
 
           display: flex;
 
           flex-direction: column;
 
-          align-items: flex-start;
+          align-items: center;
 
           justify-content: center;
 
+          border-right:
+            1px solid #343434;
+
           padding:
-            5px 28px 25px 5px;
+            15px 20px;
+
+          direction: ltr;
         }
 
 
         .vipName {
-          color: #f2c94c;
+
+          color: #f0c84d;
 
           font-family:
             Georgia,
             "Times New Roman",
             serif;
 
-          font-size: 45px;
+          font-size: 40px;
 
           font-weight: bold;
 
-          direction: ltr;
+          line-height: 1.1;
 
-          margin-bottom: 10px;
+          margin-bottom: 15px;
         }
 
 
-        .price {
+        .bigPrice {
+
           color: #fff;
 
           font-family:
@@ -586,24 +616,32 @@ export default function Home() {
 
           line-height: 1;
 
-          direction: ltr;
+          white-space: nowrap;
         }
 
 
-        /* DETAILS */
+        /* ================= DETAILS ================= */
 
         .details {
-          grid-column: 2;
-
-          grid-row: 1;
 
           padding:
-            2px 4px 15px 28px;
+            8px 0 8px 30px;
+
+          direction: rtl;
+
+          display: flex;
+
+          flex-direction: column;
+
+          justify-content: center;
         }
 
 
         .detailRow {
-          min-height: 54px;
+
+          width: 100%;
+
+          min-height: 48px;
 
           display: flex;
 
@@ -611,10 +649,12 @@ export default function Home() {
 
           justify-content: space-between;
 
+          gap: 20px;
+
           border-bottom:
             1px solid #292929;
 
-          gap: 15px;
+          direction: rtl;
         }
 
 
@@ -623,19 +663,19 @@ export default function Home() {
         }
 
 
-        .label {
-          color: #d0d0d0;
+        .detailRow span {
+
+          color: #d1d1d1;
 
           font-size: 19px;
 
           white-space: nowrap;
-
-          text-align: right;
         }
 
 
-        .value {
-          color: #f2c94c;
+        .detailRow strong {
+
+          color: #f0c84d;
 
           font-family:
             Georgia,
@@ -652,68 +692,70 @@ export default function Home() {
         }
 
 
-        .period {
-          direction: rtl;
-        }
-
-
         .totalRow {
           border-top:
-            1px solid #555;
+            1px solid #444;
 
-          margin-top: 3px;
+          margin-top: 5px;
+
+          padding-top: 5px;
         }
 
 
-        /* BUTTON */
+        /* ================= BUTTON ================= */
 
         .investButton {
-          grid-column: 1 / 3;
-
-          grid-row: 2;
 
           width: 100%;
 
-          height: 62px;
+          height: 61px;
 
-          margin-top: 12px;
+          margin-top: 20px;
 
-          display: flex;
+          border: none;
 
-          align-items: center;
-
-          justify-content: center;
-
-          border-radius: 12px;
+          border-radius: 13px;
 
           background:
             linear-gradient(
               180deg,
-              #f5cf50,
-              #dcae29
+              #f5cf4c,
+              #dcae2e
             );
 
           color: #080808;
 
-          text-decoration: none;
+          font-size: 22px;
 
-          font-size: 23px;
+          font-weight: 800;
 
-          font-weight: bold;
+          cursor: pointer;
+
+          box-shadow:
+            0 8px 18px
+            rgba(240,200,77,.10);
 
           transition:
-            .2s ease;
+            transform .15s ease,
+            filter .15s ease;
+        }
+
+
+        .investButton:hover {
+          filter: brightness(1.05);
         }
 
 
         .investButton:active {
-          transform: scale(.985);
+          transform:
+            scale(.985);
         }
 
 
-        /* OVERLAY */
+        /* ================= OVERLAY ================= */
 
         .overlay {
+
           position: fixed;
 
           inset: 0;
@@ -722,21 +764,37 @@ export default function Home() {
             rgba(0,0,0,.72);
 
           backdrop-filter:
-            blur(2px);
+            blur(3px);
 
-          z-index: 1999;
+          opacity: 0;
+
+          visibility: hidden;
+
+          transition:
+            opacity .25s ease,
+            visibility .25s ease;
+
+          z-index: 900;
         }
 
 
-        /* SIDEBAR */
+        .overlay.show {
+          opacity: 1;
+
+          visibility: visible;
+        }
+
+
+        /* ================= SIDEBAR ================= */
 
         .sidebar {
+
           position: fixed;
 
           top: 0;
           right: 0;
 
-          width: 350px;
+          width: 360px;
 
           max-width: 88vw;
 
@@ -745,14 +803,16 @@ export default function Home() {
           background:
             linear-gradient(
               180deg,
-              #101010,
+              #111,
               #080808
             );
 
           border-left:
-            1px solid #3a3a3a;
+            1px solid #343434;
 
-          z-index: 2000;
+          box-shadow:
+            -15px 0 50px
+            rgba(0,0,0,.65);
 
           transform:
             translateX(105%);
@@ -760,9 +820,12 @@ export default function Home() {
           transition:
             transform .3s ease;
 
-          overflow-y: auto;
+          z-index: 1000;
 
-          padding: 28px 22px;
+          padding:
+            28px 25px;
+
+          overflow-y: auto;
         }
 
 
@@ -772,58 +835,85 @@ export default function Home() {
         }
 
 
+        /* ================= SIDEBAR HEADER ================= */
+
         .sidebarHeader {
+
+          min-height: 72px;
+
           display: flex;
 
           align-items: center;
 
           justify-content: space-between;
 
-          padding-bottom: 25px;
-
-          margin-bottom: 12px;
+          gap: 15px;
 
           border-bottom:
-            1px solid #303030;
+            1px solid #343434;
+
+          padding-bottom: 20px;
+
+          margin-bottom: 12px;
         }
 
 
-        .sideLogo {
-          color: #f2c94c;
+        .sidebarLogo {
+
+          color: #f0c84d;
 
           font-family:
             Georgia,
             "Times New Roman",
             serif;
 
-          font-size: 29px;
+          font-size: 31px;
 
           font-weight: bold;
 
           direction: ltr;
+
+          white-space: nowrap;
         }
 
 
         .closeButton {
-          width: 44px;
-          height: 44px;
 
-          border-radius: 9px;
+          width: 52px;
+          height: 52px;
 
-          border: 1px solid #444;
+          border:
+            1px solid #555;
 
-          background: #151515;
+          border-radius: 12px;
 
-          color: #f2c94c;
+          background: #111;
 
-          font-size: 30px;
+          color: #f0c84d;
+
+          font-size: 34px;
+
+          line-height: 1;
 
           cursor: pointer;
         }
 
 
-        .sideLink,
+        /* ================= NAV ================= */
+
+        .navigation {
+
+          display: flex;
+
+          flex-direction: column;
+
+          direction: rtl;
+        }
+
+
+        .navigation > a,
         .walletButton {
+
           width: 100%;
 
           min-height: 64px;
@@ -834,20 +924,26 @@ export default function Home() {
 
           justify-content: space-between;
 
-          padding: 0 12px;
+          padding:
+            0 10px;
+
+          color: #ededed;
+
+          background: transparent;
 
           border: none;
 
           border-bottom:
             1px solid #303030;
 
-          background: transparent;
-
-          color: #eee;
-
           text-decoration: none;
 
-          font-size: 19px;
+          font-size: 20px;
+
+          font-family:
+            Arial,
+            Tahoma,
+            sans-serif;
 
           text-align: right;
 
@@ -855,274 +951,294 @@ export default function Home() {
         }
 
 
-        .sideLink.active {
-          color: #f2c94c;
+        .navigation > a:hover,
+        .walletButton:hover,
+        .walletButton.active {
 
-          background:
-            rgba(242,201,76,.12);
-
-          border-right:
-            4px solid #f2c94c;
-
-          border-radius:
-            5px 0 0 5px;
-        }
-
-
-        .walletButton.selected {
-          color: #f2c94c;
+          color: #f0c84d;
         }
 
 
         .arrow {
-          font-size: 25px;
+          color: #f0c84d;
+
+          font-size: 24px;
         }
 
+
+        /* ================= WALLET ================= */
 
         .walletMenu {
-          background: #111;
 
-          border-bottom:
-            1px solid #303030;
+          max-height: 0;
+
+          overflow: hidden;
+
+          background: #0b0b0b;
+
+          transition:
+            max-height .3s ease;
         }
 
 
-        .walletLink {
+        .walletMenu.walletShow {
+          max-height: 160px;
+        }
+
+
+        .walletMenu a {
+
           display: block;
 
           padding:
-            17px 25px;
+            18px 25px;
 
-          color: #aaa;
+          color: #bdbdbd;
 
           text-decoration: none;
 
+          border-bottom:
+            1px solid #242424;
+
           font-size: 17px;
 
-          border-bottom:
-            1px solid #252525;
+          text-align: right;
         }
 
 
-        .walletLink:last-child {
-          border-bottom: none;
+        .walletMenu a:hover {
+          color: #f0c84d;
         }
 
 
-        /* TABLET */
+        /* ================= TABLET ================= */
 
         @media (max-width: 800px) {
 
           .content {
+            max-width: 700px;
+
             padding:
-              30px 20px 70px;
+              32px 22px 70px;
           }
 
-          .plan {
-            min-height: 300px;
+          .planBody {
+            grid-template-columns:
+              40% 60%;
           }
 
           .vipName {
-            font-size: 39px;
+            font-size: 34px;
           }
 
-          .price {
-            font-size: 60px;
-          }
-
-          .label {
-            font-size: 18px;
+          .bigPrice {
+            font-size: 58px;
           }
 
         }
 
 
-        /* MOBILE */
+        /* ================= MOBILE ================= */
 
         @media (max-width: 600px) {
 
           .header {
-            height: 82px;
+            height: 92px;
           }
 
 
           .logo {
-            font-size: 31px;
+            font-size: 34px;
           }
 
 
           .menuButton {
-            left: 15px;
+            left: 18px;
 
-            top: 14px;
+            top: 18px;
 
-            width: 53px;
-            height: 53px;
-          }
-
-
-          .menuButton span {
-            width: 27px;
-            height: 3px;
+            width: 58px;
+            height: 55px;
           }
 
 
           .content {
+
+            width: 100%;
+
             padding:
               38px 20px 70px;
           }
 
 
           .plans {
-            gap: 42px;
+
+            gap: 34px;
           }
 
 
           .plan {
+
             min-height: 0;
 
             padding:
-              27px 28px 25px;
+              24px 22px 22px;
 
-            display: grid;
+            border-radius: 21px;
+          }
+
+
+          .plan.popular {
+
+            border-width: 4px;
+          }
+
+
+          .planBody {
 
             grid-template-columns:
-              1fr 1.35fr;
+              39% 61%;
 
-            border-radius: 20px;
+            min-height: 250px;
           }
 
 
-          .plan::before {
-            left: 38%;
-          }
+          .planIdentity {
 
-
-          .planMain {
             padding:
-              8px 15px 24px 0;
+              12px 8px;
           }
 
 
           .vipName {
-            font-size: 37px;
+
+            font-size: 30px;
+
+            text-align: center;
           }
 
 
-          .price {
-            font-size: 57px;
+          .bigPrice {
+
+            font-size: 49px;
           }
 
 
           .details {
+
             padding:
-              5px 0 18px 18px;
+              5px 0 5px 17px;
           }
 
 
           .detailRow {
+
             min-height: 57px;
+
+            gap: 10px;
           }
 
 
-          .label {
+          .detailRow span {
+
             font-size: 16px;
           }
 
 
-          .value {
-            font-size: 20px;
+          .detailRow strong {
+
+            font-size: 19px;
           }
 
 
           .investButton {
-            height: 62px;
 
-            margin-top: 10px;
+            height: 61px;
 
-            font-size: 22px;
+            margin-top: 20px;
+
+            font-size: 21px;
           }
 
 
           .popularBadge {
-            left: 26px;
 
-            min-width: 170px;
+            left: 25px;
 
-            font-size: 15px;
+            padding:
+              9px 19px;
+
+            font-size: 14px;
           }
 
 
           .sidebar {
-            width: 320px;
 
-            max-width: 87vw;
+            width: 84vw;
+
+            max-width: 360px;
+
+            padding:
+              25px 20px;
+          }
+
+
+          .sidebarLogo {
+
+            font-size: 27px;
           }
 
         }
 
 
-        /* SMALL PHONE */
+        /* ================= SMALL PHONES ================= */
 
-        @media (max-width: 390px) {
+        @media (max-width: 380px) {
 
           .logo {
-            font-size: 27px;
+            font-size: 29px;
           }
 
 
           .content {
             padding:
-              34px 15px 65px;
-          }
-
-
-          .plans {
-            gap: 38px;
+              30px 15px 60px;
           }
 
 
           .plan {
             padding:
-              25px 22px 22px;
+              22px 17px 20px;
+          }
+
+
+          .planBody {
+
+            grid-template-columns:
+              38% 62%;
+
+            min-height: 235px;
           }
 
 
           .vipName {
-            font-size: 32px;
+            font-size: 27px;
           }
 
 
-          .price {
-            font-size: 51px;
+          .bigPrice {
+            font-size: 43px;
           }
 
 
-          .label {
+          .details {
+            padding-left: 12px;
+          }
+
+
+          .detailRow span {
             font-size: 14px;
           }
 
 
-          .value {
-            font-size: 18px;
-          }
-
-
-          .detailRow {
-            min-height: 54px;
-          }
-
-
-          .investButton {
-            height: 58px;
-
-            font-size: 20px;
-          }
-
-        }
-
-      `}</style>
-
-    </main>
-  );
-                                           }
+        
