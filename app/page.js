@@ -1,1109 +1,719 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 const plans = [
-  { id: 1, name: 'VIP 1', price: 10, daily: 1, days: 30, total: 30 },
-  { id: 2, name: 'VIP 2', price: 20, daily: 2.5, days: 30, total: 75, popular: true },
-  { id: 3, name: 'VIP 3', price: 50, daily: 5, days: 30, total: 150 },
-  { id: 4, name: 'VIP 4', price: 100, daily: 12, days: 30, total: 360 },
+  {
+    id: 1,
+    name: "VIP 1",
+    price: 10,
+    daily: 1,
+    days: 30,
+    total: 30,
+  },
+  {
+    id: 2,
+    name: "VIP 2",
+    price: 20,
+    daily: 2.5,
+    days: 30,
+    total: 75,
+    popular: true,
+  },
+  {
+    id: 3,
+    name: "VIP 3",
+    price: 50,
+    daily: 5,
+    days: 30,
+    total: 150,
+  },
+  {
+    id: 4,
+    name: "VIP 4",
+    price: 100,
+    daily: 12,
+    days: 30,
+    total: 360,
+  },
 ];
-
-function MenuIcon() {
-  return (
-    <span className="menuIcon">
-      <span />
-      <span />
-      <span />
-    </span>
-  );
-}
-
-function CloseIcon() {
-  return <span className="closeIcon">×</span>;
-}
-
-function PlanCard({ plan, onInvest }) {
-  return (
-    <article className={`plan ${plan.popular ? 'popular' : ''}`}>
-      {plan.popular && (
-        <div className="popularBadge">
-          MOST POPULAR
-        </div>
-      )}
-
-      <div className="planTop">
-
-        <div className="planNameBox">
-          <div className="vipName">
-            {plan.name}
-          </div>
-
-          <div className="planPrice">
-            ${plan.price}
-          </div>
-        </div>
-
-        <div className="planDetails" dir="rtl">
-
-          <div className="detailRow">
-            <span>الحد الأدنى</span>
-            <strong>${plan.price}</strong>
-          </div>
-
-          <div className="detailRow">
-            <span>الربح اليومي</span>
-            <strong>${plan.daily}</strong>
-          </div>
-
-          <div className="detailRow">
-            <span>المدى</span>
-            <strong>{plan.days} يوم</strong>
-          </div>
-
-          <div className="detailRow totalRow">
-            <span>إجمالي الربح</span>
-            <strong>${plan.total}</strong>
-          </div>
-
-        </div>
-      </div>
-
-      <button
-        className="investButton"
-        onClick={() => onInvest(plan)}
-        type="button"
-      >
-        استثمار
-      </button>
-    </article>
-  );
-}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const goTo = (path) => {
-    window.location.href = path;
-  };
-
-  const handleInvest = (plan) => {
-    window.location.href =
-      `/deposit?plan=${plan.id}&amount=${plan.price}`;
+  const invest = (plan) => {
+    window.location.href = `/deposit?plan=${plan.id}`;
   };
 
   return (
-    <main className="site" dir="rtl">
-
-      {/* HEADER */}
-      <header className="header">
-
-        <button
-          className="menuButton"
-          onClick={() => setMenuOpen(true)}
-          aria-label="فتح القائمة"
-          type="button"
-        >
-          <MenuIcon />
-        </button>
-
-        <div className="logo">
-          Crypto Guys
-        </div>
-
-        <div className="headerSpace" />
-
-      </header>
-
-
-      {/* SIDEBAR */}
-      {menuOpen && (
-        <div
-          className="overlay"
-          onClick={() => setMenuOpen(false)}
-        >
-
-          <aside
-            className="sidebar"
-            onClick={(event) => event.stopPropagation()}
-          >
-
-            <div className="sidebarHeader">
-
-              <button
-                className="closeButton"
-                onClick={() => setMenuOpen(false)}
-                aria-label="إغلاق القائمة"
-                type="button"
-              >
-                <CloseIcon />
-              </button>
-
-              <div className="sidebarLogo">
-                Crypto Guys
-              </div>
-
-            </div>
-
-
-            <nav className="nav">
-
-              <button
-                className="navItem active"
-                onClick={() => goTo('/')}
-                type="button"
-              >
-                الرئيسية
-              </button>
-
-              <button
-                className="navItem"
-                onClick={() => goTo('/deposit')}
-                type="button"
-              >
-                الإيداع والشحن
-              </button>
-
-              <button
-                className="navItem"
-                onClick={() => goTo('/withdraw')}
-                type="button"
-              >
-                السحب
-              </button>
-
-
-              <div className="navGroup">
-
-                <div className="navItem navTitle">
-                  <span>المحفظة</span>
-                  <span>⌃</span>
-                </div>
-
-                <button
-                  className="subItem"
-                  onClick={() => goTo('/wallet')}
-                  type="button"
-                >
-                  المحفظة الأساسية
-                </button>
-
-                <button
-                  className="subItem"
-                  onClick={() => goTo('/wallet')}
-                  type="button"
-                >
-                  محفظة الوساطة
-                </button>
-
-              </div>
-
-
-              <button
-                className="navItem"
-                onClick={() => goTo('/about')}
-                type="button"
-              >
-                معلومات عنا
-              </button>
-
-            </nav>
-
-          </aside>
-
-        </div>
-      )}
-
-
-      {/* HERO */}
-      <section className="hero">
-
-        <p className="eyebrow">
-          خطط الاستثمار
-        </p>
-
-        <h1>
-          اختر الباقة المناسبة لك
-        </h1>
-
-        <p className="subtitle">
-          جميع الباقات متاحة أمامك — اختر الباقة التي تريدها
-          للانتقال إلى صفحة الإيداع.
-        </p>
-
-      </section>
-
-
-      {/* PLANS */}
-      <section
-        className="plans"
-        aria-label="باقات الاستثمار"
-      >
-
-        {plans.map((plan) => (
-          <PlanCard
-            key={plan.id}
-            plan={plan}
-            onInvest={handleInvest}
-          />
-        ))}
-
-      </section>
-
-
-      {/* FOOTER */}
-      <footer className="footer">
-
-        <div>
-          © 2026 Crypto Guys
-        </div>
-
-        <div>
-          يرجى مراجعة تفاصيل الباقة قبل الإيداع.
-        </div>
-
-      </footer>
-
-
-      {/* CSS */}
-      <style jsx>{`
-
+    <>
+      <style jsx global>{`
         * {
           box-sizing: border-box;
+          margin: 0;
+          padding: 0;
         }
 
+        html,
+        body {
+          background: #050607;
+          color: #fff;
+          font-family: Arial, Helvetica, sans-serif;
+        }
 
-        .site {
+        body {
+          min-height: 100vh;
+        }
+
+        button {
+          font-family: inherit;
+        }
+
+        .page {
           min-height: 100vh;
           background:
             radial-gradient(
-              circle at 50% 0%,
-              rgba(242, 190, 43, 0.08),
+              circle at 20% 20%,
+              rgba(212, 164, 35, 0.06),
               transparent 30%
             ),
-            linear-gradient(
-              180deg,
-              #070809 0%,
-              #0b0c0e 50%,
-              #050607 100%
-            );
-
-          color: #f5f5f5;
-
-          font-family:
-            Georgia,
-            'Times New Roman',
-            serif;
-
-          overflow-x: hidden;
+            linear-gradient(135deg, #050607 0%, #090a0b 50%, #030404 100%);
         }
-
 
         /* HEADER */
 
         .header {
           height: 96px;
-
           display: flex;
           align-items: center;
-
-          gap: 22px;
-
-          padding: 0 28px;
-
-          position: sticky;
-          top: 0;
-
-          z-index: 20;
-
-          background: rgba(5, 6, 7, 0.94);
-
-          border-bottom:
-            1px solid rgba(255, 255, 255, 0.14);
-
-          backdrop-filter: blur(14px);
-        }
-
-
-        .menuButton,
-        .closeButton {
-
-          width: 64px;
-          height: 64px;
-
-          flex: 0 0 64px;
-
-          border:
-            1px solid rgba(255, 255, 255, 0.22);
-
-          border-radius: 15px;
-
-          background:
-            linear-gradient(
-              145deg,
-              #111417,
-              #090a0b
-            );
-
-          color: #f4c843;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          cursor: pointer;
-
-          box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.35);
-        }
-
-
-        .menuButton:hover,
-        .closeButton:hover {
-
-          border-color: #f4c843;
-        }
-
-
-        .menuIcon {
-
-          width: 31px;
-
-          display: grid;
-
-          gap: 6px;
-        }
-
-
-        .menuIcon span {
-
-          height: 4px;
-          width: 100%;
-
-          border-radius: 4px;
-
-          background: #f4c843;
-        }
-
-
-        .closeIcon {
-
-          font-family: Arial, sans-serif;
-
-          font-size: 38px;
-
-          line-height: 1;
-
-          font-weight: 300;
-        }
-
-
-        .logo,
-        .sidebarLogo {
-
-          color: #f4c843;
-
-          font-weight: 800;
-
-          letter-spacing: -1.5px;
-
-          text-shadow:
-            0 0 22px rgba(244, 200, 67, 0.18);
-        }
-
-
-        .logo {
-
-          font-size:
-            clamp(32px, 5vw, 54px);
-
-          white-space: nowrap;
-        }
-
-
-        .headerSpace {
-          flex: 1;
-        }
-
-
-        /* HERO */
-
-        .hero {
-
-          width:
-            min(1100px, calc(100% - 32px));
-
-          margin: 0 auto;
-
-          padding:
-            54px 10px 30px;
-
-          text-align: center;
-        }
-
-
-        .eyebrow {
-
-          margin:
-            0 0 10px;
-
-          color: #f4c843;
-
-          font-size: 18px;
-
-          font-weight: 700;
-        }
-
-
-        .hero h1 {
-
-          margin: 0;
-
-          font-size:
-            clamp(30px, 5vw, 48px);
-
-          color: #ffffff;
-        }
-
-
-        .subtitle {
-
-          max-width: 680px;
-
-          margin:
-            14px auto 0;
-
-          color: #aeb2b8;
-
-          font-family: Arial, sans-serif;
-
-          font-size: 16px;
-
-          line-height: 1.8;
-        }
-
-
-        /* PLANS */
-
-        .plans {
-
-          width:
-            min(1100px, calc(100% - 32px));
-
-          margin: 0 auto;
-
-          display: grid;
-
-          grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-          gap: 24px;
-
-          padding:
-            10px 0 50px;
-        }
-
-
-        .plan {
-
           position: relative;
-
-          min-width: 0;
-
-          padding: 28px;
-
-          border:
-            1px solid rgba(255, 255, 255, 0.18);
-
-          border-radius: 24px;
-
-          background:
-
-            radial-gradient(
-              circle at 0% 0%,
-              rgba(244, 200, 67, 0.09),
-              transparent 35%
-            ),
-
-            linear-gradient(
-              145deg,
-              #141619,
-              #090a0b 70%
-            );
-
-          box-shadow:
-
-            inset
-            0 0 0 1px
-            rgba(255, 255, 255, 0.02),
-
-            0 18px 45px
-            rgba(0, 0, 0, 0.3);
-
+          padding: 0 24px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+          background: rgba(4, 5, 6, 0.97);
           overflow: hidden;
         }
 
+        .header::after {
+          content: "";
+          position: absolute;
+          right: 7%;
+          bottom: 0;
+          width: 190px;
+          height: 2px;
+          background: #f4c83d;
+          box-shadow: 0 0 14px rgba(244, 200, 61, 0.5);
+          transform: skewX(-45deg);
+        }
+
+        .menuButton {
+          width: 66px;
+          height: 62px;
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          border-radius: 13px;
+          background: linear-gradient(145deg, #111315, #08090a);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 7px;
+          cursor: pointer;
+          z-index: 5;
+        }
+
+        .menuButton span {
+          width: 30px;
+          height: 3px;
+          border-radius: 10px;
+          background: #f5c83d;
+          box-shadow: 0 0 7px rgba(245, 200, 61, 0.25);
+        }
+
+        .logo {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          color: #f4c83d;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 48px;
+          font-weight: 700;
+          white-space: nowrap;
+          text-shadow: 0 0 18px rgba(244, 200, 61, 0.13);
+        }
+
+        /* CONTENT */
+
+        .content {
+          width: 100%;
+          max-width: 690px;
+          padding: 34px 26px 70px;
+          margin: 0 auto;
+        }
+
+        .plans {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        /* PLAN CARD */
+
+        .plan {
+          position: relative;
+          width: 100%;
+          min-height: 307px;
+          border: 1px solid rgba(255, 255, 255, 0.23);
+          border-radius: 20px;
+          background:
+            radial-gradient(
+              circle at 0% 0%,
+              rgba(245, 198, 54, 0.12),
+              transparent 27%
+            ),
+            linear-gradient(145deg, #111314, #070809);
+          overflow: hidden;
+          box-shadow:
+            inset 0 0 35px rgba(255, 255, 255, 0.015),
+            0 8px 30px rgba(0, 0, 0, 0.35);
+        }
 
         .plan::before {
-
-          content: '';
-
+          content: "";
           position: absolute;
-
-          top: 0;
-          left: 0;
-
-          width: 130px;
-          height: 130px;
-
-          background:
-            linear-gradient(
-              135deg,
-              rgba(244, 200, 67, 0.34),
-              transparent 58%
-            );
-
+          left: -55px;
+          top: -40px;
+          width: 115px;
+          height: 170px;
+          background: linear-gradient(
+            130deg,
+            rgba(255, 220, 80, 0.55),
+            rgba(255, 196, 45, 0.05) 55%,
+            transparent
+          );
+          transform: skewX(-18deg);
           pointer-events: none;
         }
 
-
-        .plan.popular {
-
-          border:
-            2px solid #f4c843;
-
+        .popularPlan {
+          border: 4px solid #f4c83d;
           box-shadow:
-
-            0 0 30px
-            rgba(244, 200, 67, 0.12),
-
-            0 18px 45px
-            rgba(0, 0, 0, 0.35);
+            0 0 12px rgba(244, 200, 61, 0.4),
+            0 0 35px rgba(244, 200, 61, 0.16),
+            inset 0 0 30px rgba(244, 200, 61, 0.04);
         }
-
 
         .popularBadge {
-
           position: absolute;
-
-          top: 0;
-          left: 25px;
-
-          padding:
-            10px 24px;
-
-          border-radius:
-            0 0 18px 18px;
-
-          background: #f4c843;
-
-          color: #111;
-
-          font-family:
-            Arial, sans-serif;
-
-          font-size: 14px;
-
-          font-weight: 900;
-
-          letter-spacing: 0.4px;
+          top: -1px;
+          left: 22px;
+          min-width: 205px;
+          padding: 11px 20px;
+          border-radius: 0 0 18px 18px;
+          background: linear-gradient(180deg, #ffe05b, #e9b72c);
+          color: #080808;
+          font-size: 20px;
+          font-weight: 800;
+          text-align: center;
+          z-index: 3;
         }
 
-
-        .planTop {
-
+        .planBody {
+          min-height: 307px;
           display: grid;
-
-          grid-template-columns:
-            minmax(130px, 0.85fr)
-            minmax(0, 1.35fr);
-
-          gap: 24px;
-
-          align-items: stretch;
+          grid-template-columns: 42% 58%;
+          position: relative;
         }
 
-
-        .planNameBox {
-
+        .planMain {
+          padding: 45px 22px 72px;
           display: flex;
-
           flex-direction: column;
-
           justify-content: center;
-
           align-items: center;
-
-          padding: 28px 10px;
-
-          border-left:
-            1px solid
-            rgba(255, 255, 255, 0.12);
+          border-right: 1px solid rgba(255, 255, 255, 0.16);
+          position: relative;
         }
 
+        .popularPlan .planMain {
+          padding-top: 72px;
+        }
 
         .vipName {
-
-          color: #f4c843;
-
-          font-size:
-            clamp(27px, 4vw, 42px);
-
-          font-weight: 900;
-
-          white-space: nowrap;
+          color: #f4c83d;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 39px;
+          font-weight: 700;
+          margin-bottom: 10px;
         }
 
-
-        .planPrice {
-
-          margin-top: 8px;
-
+        .bigPrice {
           color: #fff;
-
-          font-size:
-            clamp(42px, 6vw, 62px);
-
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 64px;
           line-height: 1;
+          text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
         }
 
-
-        .planDetails {
-
-          padding: 8px 0;
+        .details {
+          padding: 27px 25px 72px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          direction: rtl;
         }
-
 
         .detailRow {
-
-          min-height: 54px;
-
           display: flex;
-
           align-items: center;
-
           justify-content: space-between;
-
-          gap: 16px;
-
-          border-bottom:
-            1px solid
-            rgba(255, 255, 255, 0.11);
-
-          font-family:
-            Arial, sans-serif;
+          gap: 12px;
+          min-height: 54px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+          font-size: 21px;
         }
 
-
-        .detailRow span {
-
-          color: #d9d9dc;
-
-          font-size: 16px;
+        .detailRow:last-child {
+          border-bottom: none;
         }
 
-
-        .detailRow strong {
-
-          color: #f4c843;
-
-          font-family:
-            Georgia,
-            'Times New Roman',
-            serif;
-
-          font-size: 20px;
-
+        .detailLabel {
+          color: #eeeeee;
           white-space: nowrap;
         }
 
-
-        .totalRow {
-
-          border-bottom: 0;
-
-          margin-top: 4px;
+        .detailValue {
+          color: #f4c83d;
+          font-weight: 800;
+          white-space: nowrap;
         }
-
 
         .investButton {
-
-          width: 100%;
-
-          height: 56px;
-
-          margin-top: 22px;
-
-          border: 0;
-
-          border-radius: 14px;
-
-          background:
-            linear-gradient(
-              180deg,
-              #ffd957 0%,
-              #e6ae24 100%
-            );
-
+          position: absolute;
+          left: 24px;
+          right: 24px;
+          bottom: 20px;
+          height: 57px;
+          border: none;
+          border-radius: 15px;
+          background: linear-gradient(180deg, #ffda55 0%, #eab52d 100%);
           color: #111;
-
-          font-family:
-            Arial, sans-serif;
-
-          font-size: 20px;
-
-          font-weight: 900;
-
+          font-size: 24px;
+          font-weight: 800;
           cursor: pointer;
-
           box-shadow:
-            0 8px 20px
-            rgba(244, 200, 67, 0.16);
+            0 5px 14px rgba(0, 0, 0, 0.35),
+            inset 0 1px rgba(255, 255, 255, 0.35);
+          transition: 0.2s ease;
+          z-index: 4;
         }
-
 
         .investButton:hover {
-
-          filter: brightness(1.07);
-
-          transform:
-            translateY(-1px);
+          transform: translateY(-2px);
+          filter: brightness(1.08);
         }
-
 
         .investButton:active {
-
-          transform:
-            translateY(0);
+          transform: translateY(0);
         }
 
-
-        /* FOOTER */
-
-        .footer {
-
-          width:
-            min(1100px, calc(100% - 32px));
-
-          margin: 0 auto;
-
-          padding:
-            25px 0 45px;
-
-          border-top:
-            1px solid
-            rgba(255, 255, 255, 0.1);
-
-          display: flex;
-
-          justify-content: space-between;
-
-          gap: 20px;
-
-          color: #777b82;
-
-          font-family:
-            Arial, sans-serif;
-
-          font-size: 13px;
-        }
-
-
-        /* SIDEBAR */
+        /* SIDE MENU */
 
         .overlay {
-
           position: fixed;
-
           inset: 0;
-
-          z-index: 100;
-
-          background:
-            rgba(0, 0, 0, 0.7);
-
-          backdrop-filter:
-            blur(3px);
+          background: rgba(0, 0, 0, 0.68);
+          z-index: 20;
+          opacity: 0;
+          visibility: hidden;
+          transition: 0.25s ease;
         }
 
+        .overlay.show {
+          opacity: 1;
+          visibility: visible;
+        }
 
         .sidebar {
-
-          width:
-            min(390px, 86vw);
-
-          height: 100%;
-
-          margin-left: auto;
-
-          padding:
-            28px 24px;
-
+          position: fixed;
+          top: 0;
+          right: 0;
+          width: min(390px, 88vw);
+          height: 100vh;
           background:
             linear-gradient(
               180deg,
-              #101214,
-              #070809
+              rgba(13, 15, 17, 0.99),
+              rgba(5, 6, 7, 0.99)
             );
-
-          border-left:
-            1px solid
-            rgba(255, 255, 255, 0.14);
-
-          box-shadow:
-            -20px 0 60px
-            rgba(0, 0, 0, 0.45);
-
+          border-left: 1px solid rgba(255, 255, 255, 0.18);
+          z-index: 30;
+          transform: translateX(100%);
+          transition: transform 0.3s ease;
+          padding: 28px 24px;
           overflow-y: auto;
         }
 
-
-        .sidebarHeader {
-
-          display: flex;
-
-          align-items: center;
-
-          gap: 18px;
-
-          padding-bottom: 26px;
-
-          border-bottom:
-            1px solid
-            rgba(255, 255, 255, 0.14);
+        .sidebar.open {
+          transform: translateX(0);
         }
-
 
         .closeButton {
-
-          width: 58px;
-          height: 58px;
-
-          flex-basis: 58px;
-        }
-
-
-        .sidebarLogo {
-
+          width: 60px;
+          height: 60px;
+          border-radius: 13px;
+          border: 1px solid rgba(255, 255, 255, 0.28);
+          background: #101213;
+          color: #f4c83d;
           font-size: 34px;
-
-          white-space: nowrap;
-        }
-
-
-        .nav {
-
-          padding-top: 24px;
-        }
-
-
-        .navItem,
-        .subItem {
-
-          width: 100%;
-
-          min-height: 58px;
-
-          padding:
-            13px 16px;
-
-          border: 0;
-
-          border-bottom:
-            1px solid
-            rgba(255, 255, 255, 0.12);
-
-          background: transparent;
-
-          color: #eee;
-
-          text-align: right;
-
-          font-family:
-            Arial, sans-serif;
-
-          font-size: 18px;
-
           cursor: pointer;
         }
 
-
-        .navItem:hover,
-        .subItem:hover,
-        .navItem.active {
-
-          color: #111;
-
-          background:
-            rgba(244, 200, 67, 0.95);
+        .sidebarLogo {
+          color: #f4c83d;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 39px;
+          font-weight: 700;
+          text-align: center;
+          margin: -55px 0 45px;
         }
 
-
-        .navTitle {
-
+        .sideLinks {
+          direction: rtl;
           display: flex;
+          flex-direction: column;
+        }
 
+        .sideLink {
+          min-height: 64px;
+          display: flex;
           align-items: center;
-
-          justify-content: space-between;
-
-          cursor: default;
-
-          color: #eee;
+          justify-content: flex-start;
+          padding: 0 20px;
+          color: #f1f1f1;
+          text-decoration: none;
+          font-size: 21px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          transition: 0.2s;
         }
 
-
-        .navTitle:hover {
-
-          color: #eee;
-
-          background: transparent;
+        .sideLink:hover {
+          color: #f4c83d;
+          background: rgba(244, 200, 61, 0.06);
         }
 
-
-        .subItem {
-
-          padding-right: 35px;
-
-          color: #b9bdc3;
-
-          font-size: 16px;
+        .activeLink {
+          color: #f4c83d;
+          border-right: 5px solid #f4c83d;
+          background: linear-gradient(
+            90deg,
+            rgba(244, 200, 61, 0.04),
+            rgba(244, 200, 61, 0.25)
+          );
         }
 
+        .submenu {
+          background: rgba(255, 255, 255, 0.015);
+        }
 
-        /* TABLET / MOBILE */
+        .submenu .sideLink {
+          padding-right: 42px;
+          font-size: 18px;
+        }
 
-        @media (max-width: 760px) {
+        /* TABLET */
 
+        @media (max-width: 700px) {
           .header {
-
-            height: 86px;
-
-            padding: 0 18px;
+            height: 94px;
+            padding: 0 22px;
           }
-
-
-          .menuButton {
-
-            width: 58px;
-            height: 58px;
-
-            flex-basis: 58px;
-          }
-
-
-          .plans {
-
-            grid-template-columns: 1fr;
-
-            width:
-              min(620px, calc(100% - 24px));
-
-            gap: 18px;
-          }
-
-
-          .hero {
-
-            width:
-              calc(100% - 24px);
-
-            padding-top: 38px;
-          }
-
-
-          .plan {
-
-            padding: 22px;
-          }
-
-
-          .footer {
-
-            width:
-              calc(100% - 24px);
-
-            flex-direction: column;
-          }
-
-        }
-
-
-        @media (max-width: 480px) {
 
           .logo {
-
-            font-size: 31px;
+            font-size: 41px;
           }
 
-
-          .planTop {
-
-            grid-template-columns: 1fr;
-
-            gap: 8px;
+          .content {
+            padding: 34px 26px 60px;
           }
 
-
-          .planNameBox {
-
-            border-left: 0;
-
-            border-bottom:
-              1px solid
-              rgba(255, 255, 255, 0.12);
-
-            padding: 20px 10px;
+          .plan {
+            min-height: 300px;
           }
 
-
-          .planDetails {
-
-            padding-top: 5px;
+          .planBody {
+            min-height: 300px;
           }
 
-
-          .detailRow span {
-
-            font-size: 15px;
+          .vipName {
+            font-size: 36px;
           }
 
+          .bigPrice {
+            font-size: 58px;
+          }
 
-          .detailRow strong {
-
+          .detailRow {
             font-size: 19px;
           }
+        }
 
+        /* PHONE */
 
-          .popularBadge {
-
-            left: 18px;
-
-            padding:
-              8px 15px;
-
-            font-size: 11px;
+        @media (max-width: 480px) {
+          .header {
+            height: 92px;
+            padding: 0 16px;
           }
 
-
-          .sidebar {
-
-            width: 88vw;
-
-            padding:
-              20px 16px;
+          .menuButton {
+            width: 64px;
+            height: 58px;
           }
 
+          .logo {
+            font-size: 32px;
+          }
 
-          .sidebarLogo {
+          .header::after {
+            width: 110px;
+            right: 2%;
+          }
 
+          .content {
+            padding: 24px 16px 55px;
+          }
+
+          .plans {
+            gap: 17px;
+          }
+
+          .plan {
+            min-height: 285px;
+            border-radius: 18px;
+          }
+
+          .planBody {
+            min-height: 285px;
+            grid-template-columns: 41% 59%;
+          }
+
+          .planMain {
+            padding: 38px 10px 70px;
+          }
+
+          .popularPlan .planMain {
+            padding-top: 65px;
+          }
+
+          .vipName {
             font-size: 28px;
           }
 
+          .bigPrice {
+            font-size: 47px;
+          }
+
+          .details {
+            padding: 23px 13px 70px;
+          }
+
+          .detailRow {
+            min-height: 48px;
+            font-size: 15px;
+            gap: 5px;
+          }
+
+          .detailLabel {
+            font-size: 15px;
+          }
+
+          .detailValue {
+            font-size: 15px;
+          }
+
+          .investButton {
+            left: 13px;
+            right: 13px;
+            bottom: 13px;
+            height: 52px;
+            font-size: 20px;
+            border-radius: 13px;
+          }
+
+          .popularBadge {
+            left: 12px;
+            min-width: 155px;
+            padding: 8px 12px;
+            font-size: 15px;
+          }
+
+          .sidebar {
+            width: 88vw;
+            padding: 22px 18px;
+          }
+
+          .sidebarLogo {
+            font-size: 32px;
+            margin-top: -50px;
+          }
+
+          .sideLink {
+            font-size: 18px;
+          }
         }
 
+        @media (max-width: 360px) {
+          .logo {
+            font-size: 27px;
+          }
+
+          .planBody {
+            grid-template-columns: 40% 60%;
+          }
+
+          .vipName {
+            font-size: 24px;
+          }
+
+          .bigPrice {
+            font-size: 40px;
+          }
+
+          .detailRow,
+          .detailLabel,
+          .detailValue {
+            font-size: 13px;
+          }
+        }
       `}</style>
 
-    </main>
+      <div className="page">
+        {/* HEADER */}
+        <header className="header">
+          <button
+            className="menuButton"
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="فتح القائمة"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <div className="logo">Crypto Guys</div>
+        </header>
+
+        {/* PLANS */}
+        <main className="content">
+          <section className="plans">
+            {plans.map((plan) => (
+              <article
+                className={`plan ${plan.popular ? "popularPlan" : ""}`}
+                key={plan.id}
+              >
+                {plan.popular && (
+                  <div className="popularBadge">MOST POPULAR</div>
+                )}
+
+                <div className="planBody">
+                  <div className="planMain">
+                    <div className="vipName">{plan.name}</div>
+                    <div className="bigPrice">${plan.price}</div>
+                  </div>
+
+                  <div className="details">
+                    <div className="detailRow">
+                      <span className="detailLabel">الحد الأدنى</span>
+                      <strong className="detailValue">
+                        ${plan.price}
+                      </strong>
+                    </div>
+
+                    <div className="detailRow">
+                      <span className="detailLabel">الربح اليومي</span>
+                      <strong className="detailValue">
+                        ${plan.daily}
+                      </strong>
+                    </div>
+
+                    <div className="detailRow">
+                      <span className="detailLabel">المدى</span>
+                      <strong className="detailValue">
+                        {plan.days} يوم
+                      </strong>
+                    </div>
+
+                    <div className="detailRow">
+                      <span className="detailLabel">إجمالي الربح</span>
+                      <strong className="detailValue">
+                        ${plan.total}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <button
+                    className="investButton"
+                    type="button"
+                    onClick={() => invest(plan)}
+                  >
+                    استثمار
+                  </button>
+                </div>
+              </article>
+            ))}
+          </section>
+        </main>
+
+        {/* OVERLAY */}
+        <div
+          className={`overlay ${menuOpen ? "show" : ""}`}
+          onClick={() => setMenuOpen(false)}
+        />
+
+        {/* SIDEBAR */}
+        <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
+          <button
+            className="closeButton"
+            type="button"
+            onClick={() => setMenuOpen(false)}
+            aria-label="إغلاق"
+          >
+            ×
+          </button>
+
+          <div className="sidebarLogo">Crypto Guys</div>
+
+          <nav className="sideLinks">
+            <a className="sideLink activeLink" href="#">
+              الإحالة
+            </a>
+
+            <a className="sideLink" href="/deposit">
+              الإيداع والشحن
+            </a>
+
+            <a className="sideLink" href="/withdraw">
+              السحب
+            </a>
+
+            <div className="sideLink">المحفظة</div>
+
+            <div className="submenu">
+              <a className="sideLink" href="/wallet">
+                المحفظة الأساسية
+              </a>
+
+              <a className="sideLink" href="/wallet">
+                محفظة الوساطة
+              </a>
+            </div>
+
+            <a className="sideLink" href="#">
+              معلومات عنا
+            </a>
+          </nav>
+        </aside>
+      </div>
+    </>
   );
-}
+                  }
