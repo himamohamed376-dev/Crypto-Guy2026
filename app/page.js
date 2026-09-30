@@ -1237,8 +1237,10 @@ export default function Home() {
 
 
           .detailRow span {
-            font-size: 14px;
-          }
+    font-size: 14px;
+}
+
+}
 
 
         
