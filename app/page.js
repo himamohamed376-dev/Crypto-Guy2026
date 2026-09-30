@@ -1,647 +1,682 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useState } from 'react';
+
+const plans = [
+  { id: 1, name: 'VIP 1', price: 10, daily: 1, days: 30, total: 30 },
+  { id: 2, name: 'VIP 2', price: 20, daily: 2.5, days: 30, total: 75, popular: true },
+  { id: 3, name: 'VIP 3', price: 50, daily: 5, days: 30, total: 150 },
+  { id: 4, name: 'VIP 4', price: 100, daily: 12, days: 30, total: 360 },
+];
+
+function MenuIcon() {
+  return (
+    <span className="menuIcon">
+      <span />
+      <span />
+      <span />
+    </span>
+  );
+}
+
+function CloseIcon() {
+  return <span className="closeIcon">×</span>;
+}
+
+function PlanCard({ plan, onInvest }) {
+  return (
+    <article className={`plan ${plan.popular ? 'popular' : ''}`}>
+      {plan.popular && (
+        <div className="popularBadge">
+          MOST POPULAR
+        </div>
+      )}
+
+      <div className="planTop">
+
+        <div className="planNameBox">
+          <div className="vipName">
+            {plan.name}
+          </div>
+
+          <div className="planPrice">
+            ${plan.price}
+          </div>
+        </div>
+
+        <div className="planDetails" dir="rtl">
+
+          <div className="detailRow">
+            <span>الحد الأدنى</span>
+            <strong>${plan.price}</strong>
+          </div>
+
+          <div className="detailRow">
+            <span>الربح اليومي</span>
+            <strong>${plan.daily}</strong>
+          </div>
+
+          <div className="detailRow">
+            <span>المدى</span>
+            <strong>{plan.days} يوم</strong>
+          </div>
+
+          <div className="detailRow totalRow">
+            <span>إجمالي الربح</span>
+            <strong>${plan.total}</strong>
+          </div>
+
+        </div>
+      </div>
+
+      <button
+        className="investButton"
+        onClick={() => onInvest(plan)}
+        type="button"
+      >
+        استثمار
+      </button>
+    </article>
+  );
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [walletOpen, setWalletOpen] = useState(false);
 
-  const plans = [
-    {
-      name: "VIP 1",
-      price: "$10",
-      minimum: "$10",
-      daily: "$1",
-      duration: "30 يوم",
-      total: "$30",
-    },
-    {
-      name: "VIP 2",
-      price: "$20",
-      minimum: "$20",
-      daily: "$2.50",
-      duration: "30 يوم",
-      total: "$75",
-      popular: true,
-    },
-    {
-      name: "VIP 3",
-      price: "$50",
-      minimum: "$50",
-      daily: "$5",
-      duration: "30 يوم",
-      total: "$150",
-    },
-    {
-      name: "VIP 4",
-      price: "$100",
-      minimum: "$100",
-      daily: "$12",
-      duration: "30 يوم",
-      total: "$360",
-    },
-  ];
+  const goTo = (path) => {
+    window.location.href = path;
+  };
 
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
+  const handleInvest = (plan) => {
+    window.location.href =
+      `/deposit?plan=${plan.id}&amount=${plan.price}`;
+  };
 
   return (
-    <main className="page" dir="rtl">
+    <main className="site" dir="rtl">
 
-      {/* ================= HEADER ================= */}
-
+      {/* HEADER */}
       <header className="header">
 
         <button
           className="menuButton"
           onClick={() => setMenuOpen(true)}
           aria-label="فتح القائمة"
+          type="button"
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <MenuIcon />
         </button>
 
         <div className="logo">
           Crypto Guys
         </div>
 
+        <div className="headerSpace" />
+
       </header>
 
 
-      {/* ================= CONTENT ================= */}
+      {/* SIDEBAR */}
+      {menuOpen && (
+        <div
+          className="overlay"
+          onClick={() => setMenuOpen(false)}
+        >
 
-      <section className="content">
+          <aside
+            className="sidebar"
+            onClick={(event) => event.stopPropagation()}
+          >
 
-        <div className="plans">
+            <div className="sidebarHeader">
 
-          {plans.map((plan, index) => (
+              <button
+                className="closeButton"
+                onClick={() => setMenuOpen(false)}
+                aria-label="إغلاق القائمة"
+                type="button"
+              >
+                <CloseIcon />
+              </button>
 
-            <article
-              className={`plan ${plan.popular ? "popular" : ""}`}
-              key={plan.name}
-            >
+              <div className="sidebarLogo">
+                Crypto Guys
+              </div>
 
-              {plan.popular && (
-                <div className="popularBadge">
-                  MOST POPULAR
+            </div>
+
+
+            <nav className="nav">
+
+              <button
+                className="navItem active"
+                onClick={() => goTo('/')}
+                type="button"
+              >
+                الرئيسية
+              </button>
+
+              <button
+                className="navItem"
+                onClick={() => goTo('/deposit')}
+                type="button"
+              >
+                الإيداع والشحن
+              </button>
+
+              <button
+                className="navItem"
+                onClick={() => goTo('/withdraw')}
+                type="button"
+              >
+                السحب
+              </button>
+
+
+              <div className="navGroup">
+
+                <div className="navItem navTitle">
+                  <span>المحفظة</span>
+                  <span>⌃</span>
                 </div>
-              )}
 
+                <button
+                  className="subItem"
+                  onClick={() => goTo('/wallet')}
+                  type="button"
+                >
+                  المحفظة الأساسية
+                </button>
 
-              {/* البطاقة الرئيسية */}
-
-              <div className="planBody">
-
-                {/* جهة VIP والسعر */}
-
-                <div className="planIdentity">
-
-                  <div className="vipName">
-                    {plan.name}
-                  </div>
-
-                  <div className="bigPrice">
-                    {plan.price}
-                  </div>
-
-                </div>
-
-
-                {/* جهة التفاصيل */}
-
-                <div className="details">
-
-                  <div className="detailRow">
-                    <span>الحد الأدنى</span>
-                    <strong>{plan.minimum}</strong>
-                  </div>
-
-                  <div className="detailRow">
-                    <span>الربح اليومي</span>
-                    <strong>{plan.daily}</strong>
-                  </div>
-
-                  <div className="detailRow">
-                    <span>المدى</span>
-                    <strong>{plan.duration}</strong>
-                  </div>
-
-                  <div className="detailRow totalRow">
-                    <span>إجمالي الربح</span>
-                    <strong>{plan.total}</strong>
-                  </div>
-
-                </div>
+                <button
+                  className="subItem"
+                  onClick={() => goTo('/wallet')}
+                  type="button"
+                >
+                  محفظة الوساطة
+                </button>
 
               </div>
 
 
-              {/* زر الاستثمار */}
-
-              <button className="investButton">
-                استثمار
+              <button
+                className="navItem"
+                onClick={() => goTo('/about')}
+                type="button"
+              >
+                معلومات عنا
               </button>
 
-            </article>
+            </nav>
 
-          ))}
+          </aside>
 
         </div>
+      )}
+
+
+      {/* HERO */}
+      <section className="hero">
+
+        <p className="eyebrow">
+          خطط الاستثمار
+        </p>
+
+        <h1>
+          اختر الباقة المناسبة لك
+        </h1>
+
+        <p className="subtitle">
+          جميع الباقات متاحة أمامك — اختر الباقة التي تريدها
+          للانتقال إلى صفحة الإيداع.
+        </p>
 
       </section>
 
 
-      {/* ================= OVERLAY ================= */}
+      {/* PLANS */}
+      <section
+        className="plans"
+        aria-label="باقات الاستثمار"
+      >
 
-      <div
-        className={`overlay ${menuOpen ? "show" : ""}`}
-        onClick={() => setMenuOpen(false)}
-      ></div>
+        {plans.map((plan) => (
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            onInvest={handleInvest}
+          />
+        ))}
+
+      </section>
 
 
-      {/* ================= SIDEBAR ================= */}
+      {/* FOOTER */}
+      <footer className="footer">
 
-      <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
-
-        <div className="sidebarHeader">
-
-          <div className="sidebarLogo">
-            Crypto Guys
-          </div>
-
-          <button
-            className="closeButton"
-            onClick={() => setMenuOpen(false)}
-          >
-            ×
-          </button>
-
+        <div>
+          © 2026 Crypto Guys
         </div>
 
+        <div>
+          يرجى مراجعة تفاصيل الباقة قبل الإيداع.
+        </div>
 
-        <nav className="navigation">
-
-          <a href="/referral">
-            الإحالة
-          </a>
-
-          <a href="/deposit">
-            الإيداع والشحن
-          </a>
-
-          <a href="/withdraw">
-            السحب
-          </a>
+      </footer>
 
 
-          {/* المحفظة */}
-
-          <button
-            className={`walletButton ${
-              walletOpen ? "active" : ""
-            }`}
-            onClick={() => setWalletOpen(!walletOpen)}
-          >
-            <span>المحفظة</span>
-
-            <span className="arrow">
-              {walletOpen ? "⌃" : "⌄"}
-            </span>
-          </button>
-
-
-          <div
-            className={`walletMenu ${
-              walletOpen ? "walletShow" : ""
-            }`}
-          >
-
-            <a href="/wallet">
-              المحفظة الأساسية
-            </a>
-
-            <a href="/wallet">
-              محفظة الوساطة
-            </a>
-
-          </div>
-
-
-          <a href="/about">
-            معلومات عنا
-          </a>
-
-        </nav>
-
-      </aside>
-
-
-      {/* ================= STYLE ================= */}
-
-      <style jsx global>{`
+      {/* CSS */}
+      <style jsx>{`
 
         * {
           box-sizing: border-box;
         }
 
-        html {
-          scroll-behavior: smooth;
-        }
 
-        body {
-          margin: 0;
-          background: #050505;
-          color: white;
-          font-family:
-            Arial,
-            Tahoma,
-            sans-serif;
-        }
-
-        button,
-        a {
-          -webkit-tap-highlight-color: transparent;
-        }
-
-
-        /* ================= PAGE ================= */
-
-        .page {
+        .site {
           min-height: 100vh;
           background:
             radial-gradient(
               circle at 50% 0%,
-              rgba(240, 200, 77, 0.045),
-              transparent 32%
+              rgba(242, 190, 43, 0.08),
+              transparent 30%
             ),
-            #050505;
+            linear-gradient(
+              180deg,
+              #070809 0%,
+              #0b0c0e 50%,
+              #050607 100%
+            );
+
+          color: #f5f5f5;
+
+          font-family:
+            Georgia,
+            'Times New Roman',
+            serif;
 
           overflow-x: hidden;
         }
 
 
-        /* ================= HEADER ================= */
+        /* HEADER */
 
         .header {
           height: 96px;
 
-          width: 100%;
-
-          position: relative;
-
           display: flex;
           align-items: center;
-          justify-content: center;
 
-          background: #070707;
+          gap: 22px;
+
+          padding: 0 28px;
+
+          position: sticky;
+          top: 0;
+
+          z-index: 20;
+
+          background: rgba(5, 6, 7, 0.94);
 
           border-bottom:
-            1px solid #292929;
+            1px solid rgba(255, 255, 255, 0.14);
 
-          z-index: 100;
+          backdrop-filter: blur(14px);
         }
 
 
-        .header::after {
-          content: "";
+        .menuButton,
+        .closeButton {
 
-          position: absolute;
+          width: 64px;
+          height: 64px;
 
-          bottom: -1px;
-          left: 0;
-
-          width: 55%;
-          height: 2px;
-
-          background:
-            linear-gradient(
-              90deg,
-              transparent,
-              #f0c84d,
-              transparent
-            );
-
-          opacity: .65;
-        }
-
-
-        .logo {
-          color: #f0c84d;
-
-          font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-          font-size: 43px;
-
-          font-weight: 800;
-
-          letter-spacing: -1px;
-
-          direction: ltr;
-
-          text-shadow:
-            0 0 12px
-            rgba(240, 200, 77, .08);
-        }
-
-
-        /* ================= MENU BUTTON ================= */
-
-        .menuButton {
-          position: absolute;
-
-          left: 24px;
-
-          top: 19px;
-
-          width: 62px;
-          height: 58px;
-
-          border-radius: 12px;
-
-          background: #101010;
+          flex: 0 0 64px;
 
           border:
-            1px solid #444;
+            1px solid rgba(255, 255, 255, 0.22);
 
-          display: flex;
-
-          flex-direction: column;
-
-          align-items: center;
-
-          justify-content: center;
-
-          gap: 7px;
-
-          cursor: pointer;
-        }
-
-
-        .menuButton span {
-          display: block;
-
-          width: 31px;
-          height: 4px;
-
-          border-radius: 5px;
-
-          background: #f0c84d;
-
-          box-shadow:
-            0 0 5px
-            rgba(240, 200, 77, .15);
-        }
-
-
-        /* ================= CONTENT ================= */
-
-        .content {
-          width: 100%;
-
-          max-width: 1080px;
-
-          margin: 0 auto;
-
-          padding:
-            38px 28px 80px;
-        }
-
-
-        .plans {
-          width: 100%;
-
-          display: flex;
-
-          flex-direction: column;
-
-          gap: 26px;
-        }
-
-
-        /* ================= CARD ================= */
-
-        .plan {
-          position: relative;
-
-          width: 100%;
-
-          min-height: 300px;
+          border-radius: 15px;
 
           background:
             linear-gradient(
               145deg,
-              #171717,
-              #0d0d0d
+              #111417,
+              #090a0b
             );
 
-          border:
-            1px solid #383838;
+          color: #f4c843;
 
-          border-radius: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-          padding:
-            26px 28px 23px;
-
-          overflow: hidden;
+          cursor: pointer;
 
           box-shadow:
-            0 15px 40px
-            rgba(0,0,0,.40);
-
-          transition:
-            transform .2s ease,
-            border-color .2s ease;
+            0 8px 24px rgba(0, 0, 0, 0.35);
         }
 
 
-        .plan:hover {
-          border-color: #555;
+        .menuButton:hover,
+        .closeButton:hover {
 
-          transform:
-            translateY(-2px);
+          border-color: #f4c843;
         }
 
 
-        /* لمعة خفيفة */
+        .menuIcon {
 
-        .plan::before {
-          content: "";
-
-          position: absolute;
-
-          top: -100px;
-          left: -120px;
-
-          width: 230px;
-          height: 320px;
-
-          background:
-            linear-gradient(
-              120deg,
-              transparent,
-              rgba(240,200,77,.12),
-              transparent
-            );
-
-          transform: rotate(18deg);
-
-          pointer-events: none;
-        }
-
-
-        /* ================= POPULAR ================= */
-
-        .plan.popular {
-          border:
-            4px solid #f0c84d;
-
-          box-shadow:
-            0 0 22px
-            rgba(240,200,77,.14);
-        }
-
-
-        .popularBadge {
-          position: absolute;
-
-          top: -1px;
-          left: 30px;
-
-          background: #f0c84d;
-
-          color: #080808;
-
-          padding:
-            10px 24px;
-
-          border-radius:
-            0 0 13px 13px;
-
-          font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-          font-size: 16px;
-
-          font-weight: 800;
-
-          direction: ltr;
-
-          z-index: 5;
-        }
-
-
-        /* ================= CARD BODY ================= */
-
-        .planBody {
-
-          width: 100%;
-
-          min-height: 210px;
+          width: 31px;
 
           display: grid;
 
-          grid-template-columns:
-            38% 62%;
-
-          direction: ltr;
-
-          align-items: stretch;
+          gap: 6px;
         }
 
 
-        /* ================= VIP SIDE ================= */
+        .menuIcon span {
 
-        .planIdentity {
+          height: 4px;
+          width: 100%;
 
-          display: flex;
+          border-radius: 4px;
 
-          flex-direction: column;
-
-          align-items: center;
-
-          justify-content: center;
-
-          border-right:
-            1px solid #343434;
-
-          padding:
-            15px 20px;
-
-          direction: ltr;
+          background: #f4c843;
         }
 
 
-        .vipName {
+        .closeIcon {
 
-          color: #f0c84d;
+          font-family: Arial, sans-serif;
 
-          font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-          font-size: 40px;
-
-          font-weight: bold;
-
-          line-height: 1.1;
-
-          margin-bottom: 15px;
-        }
-
-
-        .bigPrice {
-
-          color: #fff;
-
-          font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-          font-size: 68px;
-
-          font-weight: bold;
+          font-size: 38px;
 
           line-height: 1;
+
+          font-weight: 300;
+        }
+
+
+        .logo,
+        .sidebarLogo {
+
+          color: #f4c843;
+
+          font-weight: 800;
+
+          letter-spacing: -1.5px;
+
+          text-shadow:
+            0 0 22px rgba(244, 200, 67, 0.18);
+        }
+
+
+        .logo {
+
+          font-size:
+            clamp(32px, 5vw, 54px);
 
           white-space: nowrap;
         }
 
 
-        /* ================= DETAILS ================= */
+        .headerSpace {
+          flex: 1;
+        }
 
-        .details {
+
+        /* HERO */
+
+        .hero {
+
+          width:
+            min(1100px, calc(100% - 32px));
+
+          margin: 0 auto;
 
           padding:
-            8px 0 8px 30px;
+            54px 10px 30px;
 
-          direction: rtl;
+          text-align: center;
+        }
+
+
+        .eyebrow {
+
+          margin:
+            0 0 10px;
+
+          color: #f4c843;
+
+          font-size: 18px;
+
+          font-weight: 700;
+        }
+
+
+        .hero h1 {
+
+          margin: 0;
+
+          font-size:
+            clamp(30px, 5vw, 48px);
+
+          color: #ffffff;
+        }
+
+
+        .subtitle {
+
+          max-width: 680px;
+
+          margin:
+            14px auto 0;
+
+          color: #aeb2b8;
+
+          font-family: Arial, sans-serif;
+
+          font-size: 16px;
+
+          line-height: 1.8;
+        }
+
+
+        /* PLANS */
+
+        .plans {
+
+          width:
+            min(1100px, calc(100% - 32px));
+
+          margin: 0 auto;
+
+          display: grid;
+
+          grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+          gap: 24px;
+
+          padding:
+            10px 0 50px;
+        }
+
+
+        .plan {
+
+          position: relative;
+
+          min-width: 0;
+
+          padding: 28px;
+
+          border:
+            1px solid rgba(255, 255, 255, 0.18);
+
+          border-radius: 24px;
+
+          background:
+
+            radial-gradient(
+              circle at 0% 0%,
+              rgba(244, 200, 67, 0.09),
+              transparent 35%
+            ),
+
+            linear-gradient(
+              145deg,
+              #141619,
+              #090a0b 70%
+            );
+
+          box-shadow:
+
+            inset
+            0 0 0 1px
+            rgba(255, 255, 255, 0.02),
+
+            0 18px 45px
+            rgba(0, 0, 0, 0.3);
+
+          overflow: hidden;
+        }
+
+
+        .plan::before {
+
+          content: '';
+
+          position: absolute;
+
+          top: 0;
+          left: 0;
+
+          width: 130px;
+          height: 130px;
+
+          background:
+            linear-gradient(
+              135deg,
+              rgba(244, 200, 67, 0.34),
+              transparent 58%
+            );
+
+          pointer-events: none;
+        }
+
+
+        .plan.popular {
+
+          border:
+            2px solid #f4c843;
+
+          box-shadow:
+
+            0 0 30px
+            rgba(244, 200, 67, 0.12),
+
+            0 18px 45px
+            rgba(0, 0, 0, 0.35);
+        }
+
+
+        .popularBadge {
+
+          position: absolute;
+
+          top: 0;
+          left: 25px;
+
+          padding:
+            10px 24px;
+
+          border-radius:
+            0 0 18px 18px;
+
+          background: #f4c843;
+
+          color: #111;
+
+          font-family:
+            Arial, sans-serif;
+
+          font-size: 14px;
+
+          font-weight: 900;
+
+          letter-spacing: 0.4px;
+        }
+
+
+        .planTop {
+
+          display: grid;
+
+          grid-template-columns:
+            minmax(130px, 0.85fr)
+            minmax(0, 1.35fr);
+
+          gap: 24px;
+
+          align-items: stretch;
+        }
+
+
+        .planNameBox {
 
           display: flex;
 
           flex-direction: column;
 
           justify-content: center;
+
+          align-items: center;
+
+          padding: 28px 10px;
+
+          border-left:
+            1px solid
+            rgba(255, 255, 255, 0.12);
+        }
+
+
+        .vipName {
+
+          color: #f4c843;
+
+          font-size:
+            clamp(27px, 4vw, 42px);
+
+          font-weight: 900;
+
+          white-space: nowrap;
+        }
+
+
+        .planPrice {
+
+          margin-top: 8px;
+
+          color: #fff;
+
+          font-size:
+            clamp(42px, 6vw, 62px);
+
+          line-height: 1;
+        }
+
+
+        .planDetails {
+
+          padding: 8px 0;
         }
 
 
         .detailRow {
 
-          width: 100%;
-
-          min-height: 48px;
+          min-height: 54px;
 
           display: flex;
 
@@ -649,110 +684,132 @@ export default function Home() {
 
           justify-content: space-between;
 
-          gap: 20px;
+          gap: 16px;
 
           border-bottom:
-            1px solid #292929;
+            1px solid
+            rgba(255, 255, 255, 0.11);
 
-          direction: rtl;
-        }
-
-
-        .detailRow:last-child {
-          border-bottom: none;
+          font-family:
+            Arial, sans-serif;
         }
 
 
         .detailRow span {
 
-          color: #d1d1d1;
+          color: #d9d9dc;
 
-          font-size: 19px;
-
-          white-space: nowrap;
+          font-size: 16px;
         }
 
 
         .detailRow strong {
 
-          color: #f0c84d;
+          color: #f4c843;
 
           font-family:
             Georgia,
-            "Times New Roman",
+            'Times New Roman',
             serif;
 
-          font-size: 22px;
-
-          font-weight: bold;
-
-          direction: ltr;
+          font-size: 20px;
 
           white-space: nowrap;
         }
 
 
         .totalRow {
-          border-top:
-            1px solid #444;
 
-          margin-top: 5px;
+          border-bottom: 0;
 
-          padding-top: 5px;
+          margin-top: 4px;
         }
 
-
-        /* ================= BUTTON ================= */
 
         .investButton {
 
           width: 100%;
 
-          height: 61px;
+          height: 56px;
 
-          margin-top: 20px;
+          margin-top: 22px;
 
-          border: none;
+          border: 0;
 
-          border-radius: 13px;
+          border-radius: 14px;
 
           background:
             linear-gradient(
               180deg,
-              #f5cf4c,
-              #dcae2e
+              #ffd957 0%,
+              #e6ae24 100%
             );
 
-          color: #080808;
+          color: #111;
 
-          font-size: 22px;
+          font-family:
+            Arial, sans-serif;
 
-          font-weight: 800;
+          font-size: 20px;
+
+          font-weight: 900;
 
           cursor: pointer;
 
           box-shadow:
-            0 8px 18px
-            rgba(240,200,77,.10);
-
-          transition:
-            transform .15s ease,
-            filter .15s ease;
+            0 8px 20px
+            rgba(244, 200, 67, 0.16);
         }
 
 
         .investButton:hover {
-          filter: brightness(1.05);
+
+          filter: brightness(1.07);
+
+          transform:
+            translateY(-1px);
         }
 
 
         .investButton:active {
+
           transform:
-            scale(.985);
+            translateY(0);
         }
 
 
-        /* ================= OVERLAY ================= */
+        /* FOOTER */
+
+        .footer {
+
+          width:
+            min(1100px, calc(100% - 32px));
+
+          margin: 0 auto;
+
+          padding:
+            25px 0 45px;
+
+          border-top:
+            1px solid
+            rgba(255, 255, 255, 0.1);
+
+          display: flex;
+
+          justify-content: space-between;
+
+          gap: 20px;
+
+          color: #777b82;
+
+          font-family:
+            Arial, sans-serif;
+
+          font-size: 13px;
+        }
+
+
+        /* SIDEBAR */
 
         .overlay {
 
@@ -760,163 +817,129 @@ export default function Home() {
 
           inset: 0;
 
+          z-index: 100;
+
           background:
-            rgba(0,0,0,.72);
+            rgba(0, 0, 0, 0.7);
 
           backdrop-filter:
             blur(3px);
-
-          opacity: 0;
-
-          visibility: hidden;
-
-          transition:
-            opacity .25s ease,
-            visibility .25s ease;
-
-          z-index: 900;
         }
 
-
-        .overlay.show {
-          opacity: 1;
-
-          visibility: visible;
-        }
-
-
-        /* ================= SIDEBAR ================= */
 
         .sidebar {
 
-          position: fixed;
+          width:
+            min(390px, 86vw);
 
-          top: 0;
-          right: 0;
+          height: 100%;
 
-          width: 360px;
+          margin-left: auto;
 
-          max-width: 88vw;
-
-          height: 100vh;
+          padding:
+            28px 24px;
 
           background:
             linear-gradient(
               180deg,
-              #111,
-              #080808
+              #101214,
+              #070809
             );
 
           border-left:
-            1px solid #343434;
+            1px solid
+            rgba(255, 255, 255, 0.14);
 
           box-shadow:
-            -15px 0 50px
-            rgba(0,0,0,.65);
-
-          transform:
-            translateX(105%);
-
-          transition:
-            transform .3s ease;
-
-          z-index: 1000;
-
-          padding:
-            28px 25px;
+            -20px 0 60px
+            rgba(0, 0, 0, 0.45);
 
           overflow-y: auto;
         }
 
 
-        .sidebar.open {
-          transform:
-            translateX(0);
-        }
-
-
-        /* ================= SIDEBAR HEADER ================= */
-
         .sidebarHeader {
-
-          min-height: 72px;
 
           display: flex;
 
           align-items: center;
 
-          justify-content: space-between;
+          gap: 18px;
 
-          gap: 15px;
+          padding-bottom: 26px;
 
           border-bottom:
-            1px solid #343434;
-
-          padding-bottom: 20px;
-
-          margin-bottom: 12px;
-        }
-
-
-        .sidebarLogo {
-
-          color: #f0c84d;
-
-          font-family:
-            Georgia,
-            "Times New Roman",
-            serif;
-
-          font-size: 31px;
-
-          font-weight: bold;
-
-          direction: ltr;
-
-          white-space: nowrap;
+            1px solid
+            rgba(255, 255, 255, 0.14);
         }
 
 
         .closeButton {
 
-          width: 52px;
-          height: 52px;
+          width: 58px;
+          height: 58px;
 
-          border:
-            1px solid #555;
+          flex-basis: 58px;
+        }
 
-          border-radius: 12px;
 
-          background: #111;
-
-          color: #f0c84d;
+        .sidebarLogo {
 
           font-size: 34px;
 
-          line-height: 1;
+          white-space: nowrap;
+        }
+
+
+        .nav {
+
+          padding-top: 24px;
+        }
+
+
+        .navItem,
+        .subItem {
+
+          width: 100%;
+
+          min-height: 58px;
+
+          padding:
+            13px 16px;
+
+          border: 0;
+
+          border-bottom:
+            1px solid
+            rgba(255, 255, 255, 0.12);
+
+          background: transparent;
+
+          color: #eee;
+
+          text-align: right;
+
+          font-family:
+            Arial, sans-serif;
+
+          font-size: 18px;
 
           cursor: pointer;
         }
 
 
-        /* ================= NAV ================= */
+        .navItem:hover,
+        .subItem:hover,
+        .navItem.active {
 
-        .navigation {
+          color: #111;
 
-          display: flex;
-
-          flex-direction: column;
-
-          direction: rtl;
+          background:
+            rgba(244, 200, 67, 0.95);
         }
 
 
-        .navigation > a,
-        .walletButton {
-
-          width: 100%;
-
-          min-height: 64px;
+        .navTitle {
 
           display: flex;
 
@@ -924,224 +947,125 @@ export default function Home() {
 
           justify-content: space-between;
 
-          padding:
-            0 10px;
+          cursor: default;
 
-          color: #ededed;
+          color: #eee;
+        }
+
+
+        .navTitle:hover {
+
+          color: #eee;
 
           background: transparent;
-
-          border: none;
-
-          border-bottom:
-            1px solid #303030;
-
-          text-decoration: none;
-
-          font-size: 20px;
-
-          font-family:
-            Arial,
-            Tahoma,
-            sans-serif;
-
-          text-align: right;
-
-          cursor: pointer;
         }
 
 
-        .navigation > a:hover,
-        .walletButton:hover,
-        .walletButton.active {
+        .subItem {
 
-          color: #f0c84d;
+          padding-right: 35px;
+
+          color: #b9bdc3;
+
+          font-size: 16px;
         }
 
 
-        .arrow {
-          color: #f0c84d;
+        /* TABLET / MOBILE */
 
-          font-size: 24px;
-        }
-
-
-        /* ================= WALLET ================= */
-
-        .walletMenu {
-
-          max-height: 0;
-
-          overflow: hidden;
-
-          background: #0b0b0b;
-
-          transition:
-            max-height .3s ease;
-        }
-
-
-        .walletMenu.walletShow {
-          max-height: 160px;
-        }
-
-
-        .walletMenu a {
-
-          display: block;
-
-          padding:
-            18px 25px;
-
-          color: #bdbdbd;
-
-          text-decoration: none;
-
-          border-bottom:
-            1px solid #242424;
-
-          font-size: 17px;
-
-          text-align: right;
-        }
-
-
-        .walletMenu a:hover {
-          color: #f0c84d;
-        }
-
-
-        /* ================= TABLET ================= */
-
-        @media (max-width: 800px) {
-
-          .content {
-            max-width: 700px;
-
-            padding:
-              32px 22px 70px;
-          }
-
-          .planBody {
-            grid-template-columns:
-              40% 60%;
-          }
-
-          .vipName {
-            font-size: 34px;
-          }
-
-          .bigPrice {
-            font-size: 58px;
-          }
-
-        }
-
-
-        /* ================= MOBILE ================= */
-
-        @media (max-width: 600px) {
+        @media (max-width: 760px) {
 
           .header {
-            height: 92px;
-          }
 
+            height: 86px;
 
-          .logo {
-            font-size: 34px;
+            padding: 0 18px;
           }
 
 
           .menuButton {
-            left: 18px;
-
-            top: 18px;
 
             width: 58px;
-            height: 55px;
-          }
+            height: 58px;
 
-
-          .content {
-
-            width: 100%;
-
-            padding:
-              38px 20px 70px;
+            flex-basis: 58px;
           }
 
 
           .plans {
 
-            gap: 34px;
+            grid-template-columns: 1fr;
+
+            width:
+              min(620px, calc(100% - 24px));
+
+            gap: 18px;
+          }
+
+
+          .hero {
+
+            width:
+              calc(100% - 24px);
+
+            padding-top: 38px;
           }
 
 
           .plan {
 
-            min-height: 0;
-
-            padding:
-              24px 22px 22px;
-
-            border-radius: 21px;
+            padding: 22px;
           }
 
 
-          .plan.popular {
+          .footer {
 
-            border-width: 4px;
+            width:
+              calc(100% - 24px);
+
+            flex-direction: column;
+          }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+          .logo {
+
+            font-size: 31px;
           }
 
 
-          .planBody {
+          .planTop {
 
-            grid-template-columns:
-              39% 61%;
+            grid-template-columns: 1fr;
 
-            min-height: 250px;
+            gap: 8px;
           }
 
 
-          .planIdentity {
+          .planNameBox {
 
-            padding:
-              12px 8px;
+            border-left: 0;
+
+            border-bottom:
+              1px solid
+              rgba(255, 255, 255, 0.12);
+
+            padding: 20px 10px;
           }
 
 
-          .vipName {
+          .planDetails {
 
-            font-size: 30px;
-
-            text-align: center;
-          }
-
-
-          .bigPrice {
-
-            font-size: 49px;
-          }
-
-
-          .details {
-
-            padding:
-              5px 0 5px 17px;
-          }
-
-
-          .detailRow {
-
-            min-height: 57px;
-
-            gap: 10px;
+            padding-top: 5px;
           }
 
 
           .detailRow span {
 
-            font-size: 16px;
+            font-size: 15px;
           }
 
 
@@ -1151,96 +1075,35 @@ export default function Home() {
           }
 
 
-          .investButton {
-
-            height: 61px;
-
-            margin-top: 20px;
-
-            font-size: 21px;
-          }
-
-
           .popularBadge {
 
-            left: 25px;
+            left: 18px;
 
             padding:
-              9px 19px;
+              8px 15px;
 
-            font-size: 14px;
+            font-size: 11px;
           }
 
 
           .sidebar {
 
-            width: 84vw;
-
-            max-width: 360px;
+            width: 88vw;
 
             padding:
-              25px 20px;
+              20px 16px;
           }
 
 
           .sidebarLogo {
 
-            font-size: 27px;
+            font-size: 28px;
           }
 
         }
 
+      `}</style>
 
-        /* ================= SMALL PHONES ================= */
-
-        @media (max-width: 380px) {
-
-          .logo {
-            font-size: 29px;
-          }
-
-
-          .content {
-            padding:
-              30px 15px 60px;
-          }
-
-
-          .plan {
-            padding:
-              22px 17px 20px;
-          }
-
-
-          .planBody {
-
-            grid-template-columns:
-              38% 62%;
-
-            min-height: 235px;
-          }
-
-
-          .vipName {
-            font-size: 27px;
-          }
-
-
-          .bigPrice {
-            font-size: 43px;
-          }
-
-
-          .details {
-            padding-left: 12px;
-          }
-
-
-          .detailRow span {
-    font-size: 14px;
+    </main>
+  );
 }
-
-}
-
-
-        
