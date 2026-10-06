@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 
 export default function DepositPage() {
   const [user, setUser] = useState(null);
@@ -14,12 +13,19 @@ export default function DepositPage() {
     '0xc25f40ac368e83f96027dd1d4c719e81c0009bd8';
 
   useEffect(() => {
-    const u = JSON.parse(localStorage.getItem('user') || 'null');
+    try {
+      const savedUser = JSON.parse(
+        localStorage.getItem('user') || 'null'
+      );
 
-    if (!u) {
+      if (!savedUser) {
+        window.location.href = '/auth';
+        return;
+      }
+
+      setUser(savedUser);
+    } catch {
       window.location.href = '/auth';
-    } else {
-      setUser(u);
     }
   }, []);
 
@@ -33,21 +39,24 @@ export default function DepositPage() {
         setCopied(false);
       }, 2000);
     } catch {
-      setMsg('تعذر نسخ العنوان');
+      setMsg('تعذر نسخ العنوان، حاول مرة أخرى');
     }
   };
 
   const handleDeposit = async (e) => {
     e.preventDefault();
 
-    const depositAmount = parseFloat(amount);
+    const depositAmount = Number(amount);
 
     if (!depositAmount || depositAmount < 10) {
-      setMsg('⚠️ الحد الأدنى للإيداع هو 10 USDT');
+      setMsg(' الحد الأدنى للإيداع هو 10 USDT');
       return;
     }
 
-    if (!user) return;
+    if (!user) {
+      setMsg('يرجى تسجيل الدخول أولاً');
+      return;
+    }
 
     try {
       setLoading(true);
@@ -68,17 +77,19 @@ export default function DepositPage() {
 
       if (data.success) {
         setMsg(
-          '✅ تم إرسال طلب الإيداع - سيتم إضافة الرصيد بعد التحقق'
+          ' تم إرسال طلب الإيداع بنجاح. سيتم التحقق من العملية وإضافة الرصيد.'
         );
 
         setAmount('');
       } else {
-        setMsg(data.error || 'حدث خطأ أثناء إرسال الطلب');
+        setMsg(
+          data.error || 'حدث خطأ أثناء إرسال طلب الإيداع'
+        );
       }
-
     } catch {
-      setMsg('❌ تعذر الاتصال بالخادم');
-
+      setMsg(
+        ' تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى.'
+      );
     } finally {
       setLoading(false);
     }
@@ -87,236 +98,319 @@ export default function DepositPage() {
   if (!user) return null;
 
   return (
-    <div className="cg-page">
+    <div className="deposit-page" dir="rtl">
 
-      {/* HEADER */}
-      <header className="cg-header">
+      {/* Header */}
+      <header className="deposit-header">
 
-        <div className="cg-brand">
+        <div className="brand">
 
-          <div className="cg-logo">
+          <div className="brand-icon">
             ◆
           </div>
 
           <div>
-            <div className="cg-brand-name">
+            <div className="brand-name">
               CRYPTO GUYS
             </div>
 
-            <div className="cg-brand-sub">
-              SAFE • FAST • RELIABLE
+            <div className="brand-sub">
+              SECURE • FAST • SIMPLE
             </div>
           </div>
 
         </div>
 
-        <div className="cg-menu">
-          ☰
+        <div className="header-title">
+          إيداع
         </div>
 
       </header>
 
 
-      <main className="cg-container">
+      <main className="deposit-container">
 
-        {/* TITLE */}
-        <div className="cg-title">
+        {/* Page title */}
+        <section className="page-title">
 
-          <div className="cg-wallet-icon">
+          <div className="title-icon">
             ₮
           </div>
 
-          <h1>إعادة شحن</h1>
+          <h1>
+            إعادة شحن
+          </h1>
 
           <p>
-            قم بإيداع عملاتك الرقمية لبدء التداول والاستثمار
+            أودع USDT بأمان إلى حسابك
           </p>
 
-        </div>
+        </section>
 
 
-        {/* MAIN CARD */}
-        <div className="cg-card">
+        {/* Main card */}
+        <section className="deposit-card">
 
-          {/* NETWORK + COIN */}
-          <div className="cg-options">
+          {/* Network */}
+          <div className="info-grid">
 
-            <div className="cg-option">
+            <div className="info-box">
 
-              <span>
+              <span className="info-label">
                 الشبكة
               </span>
 
-              <strong>
+              <div className="info-value">
+                <span className="network-dot"></span>
                 BEP20 (BSC)
-              </strong>
+              </div>
 
             </div>
 
 
-            <div className="cg-option">
+            <div className="info-box">
 
-              <span>
+              <span className="info-label">
                 العملة
               </span>
 
-              <strong>
+              <div className="info-value">
+
+                <span className="usdt-icon">
+                  ₮
+                </span>
+
                 USDT
-              </strong>
+
+              </div>
 
             </div>
 
           </div>
 
 
-          {/* WALLET ADDRESS */}
-          <div className="cg-address-card">
+          {/* Wallet address */}
+          <div className="section-box">
 
-            <div className="cg-label">
-              عنوان المحفظة
+            <div className="section-heading">
+
+              <span>
+                عنوان محفظة الإيداع
+              </span>
+
+              <span className="secure-label">
+                آمن
+              </span>
+
             </div>
 
-            <div className="cg-address-row">
 
-              <div className="cg-address">
+            <div className="address-box">
+
+              <div className="address-text">
                 {walletAddress}
               </div>
 
               <button
                 type="button"
+                className="copy-button"
                 onClick={copyWallet}
-                className="cg-copy"
               >
-                {copied ? '✓' : 'نسخ'}
+                {copied ? '✓ تم النسخ' : 'نسخ'}
               </button>
 
             </div>
 
 
-            {/* QR CODE */}
-            <div className="cg-qr">
+            <div className="address-note">
+              اضغط على زر النسخ لاستخدام العنوان بسهولة
+            </div>
 
-              <QRCodeSVG
-                value={walletAddress}
-                size={175}
-                bgColor="#ffffff"
-                fgColor="#000000"
-                level="H"
-              />
+          </div>
 
-              <p>
-                امسح رمز QR لإرسال USDT
-                <br />
-                إلى عنوان المحفظة
-              </p>
+
+          {/* Important warning */}
+          <div className="warning-box">
+
+            <div className="warning-icon">
+              !
+            </div>
+
+            <div>
+
+              <div className="warning-title">
+                تأكد قبل التحويل
+              </div>
+
+              <div className="warning-text">
+                استخدم شبكة BEP20 (BSC) فقط عند إرسال USDT.
+                إرسال الأموال عبر شبكة أخرى قد يؤدي إلى فقدانها.
+              </div>
 
             </div>
 
           </div>
 
 
-          {/* AMOUNT */}
+          {/* Deposit form */}
           <form onSubmit={handleDeposit}>
 
-            <div className="cg-amount">
+            <div className="section-box amount-box">
 
-              <div className="cg-label">
-                المبلغ <small>(اختياري)</small>
+              <div className="section-heading">
+                <span>
+                  مبلغ الإيداع
+                </span>
+
+                <span className="optional">
+                  الحد الأدنى 10 USDT
+                </span>
               </div>
 
-              <div className="cg-input-box">
+
+              <div className="amount-input-wrapper">
 
                 <input
                   type="number"
                   min="10"
                   step="0.01"
+                  inputMode="decimal"
                   placeholder="أدخل المبلغ المراد إيداعه"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   required
                 />
 
-                <div className="cg-usdt">
-                  ₮ USDT
+                <div className="currency-badge">
+
+                  <span className="currency-icon">
+                    ₮
+                  </span>
+
+                  USDT
+
                 </div>
 
               </div>
 
-              <div className="cg-min">
-                الحد الأدنى: <b>10 USDT</b>
+
+              <div className="minimum-text">
+                الحد الأدنى للإيداع:
+                <strong> 10 USDT</strong>
               </div>
 
             </div>
 
 
-            {/* BUTTON */}
+            {/* Submit */}
             <button
               type="submit"
+              className="deposit-button"
               disabled={loading}
-              className="cg-confirm"
             >
-              {loading
-                ? 'جاري الإرسال...'
-                : 'تأكيد الإيداع →'
-              }
+
+              {loading ? (
+                <>
+                  <span className="spinner"></span>
+                  جاري إرسال الطلب...
+                </>
+              ) : (
+                <>
+                  تأكيد الإيداع
+                  <span className="button-arrow">
+                    ←
+                  </span>
+                </>
+              )}
+
             </button>
 
           </form>
 
 
-          {/* MESSAGE */}
+          {/* Message */}
           {msg && (
-            <div className="cg-message">
+            <div
+              className={
+                msg.startsWith('')
+                  ? 'message success'
+                  : 'message'
+              }
+            >
               {msg}
             </div>
           )}
 
 
-          {/* REMINDER */}
-          <div className="cg-reminder">
+          {/* Warm reminder */}
+          <div className="reminder">
 
-            <div className="cg-reminder-title">
-              <span>!</span>
-              تذكير مهم
+            <div className="reminder-header">
+
+              <div className="reminder-icon">
+                ♥
+              </div>
+
+              <div>
+
+                <div className="reminder-title">
+                  تذكير مهم
+                </div>
+
+                <div className="reminder-subtitle">
+                  نحن نهتم بأمان أموالك
+                </div>
+
+              </div>
+
             </div>
 
-            <ul>
 
-              <li>
-                تأكد من اختيار شبكة
-                <b> BEP20 (BSC) </b>
-                عند الإيداع.
-              </li>
+            <div className="reminder-list">
 
-              <li>
-                أرسل <b>USDT</b> فقط إلى هذا العنوان.
-              </li>
+              <div className="reminder-item">
+                <span>✓</span>
+                تأكد من أن الشبكة المختارة هي
+                <strong> BEP20 (BSC)</strong>.
+              </div>
 
-              <li>
-                تأكد من صحة عنوان المحفظة قبل الإرسال.
-              </li>
+              <div className="reminder-item">
+                <span>✓</span>
+                أرسل <strong>USDT</strong> فقط إلى عنوان الإيداع.
+              </div>
 
-              <li>
-                إرسال عملة أو شبكة خاطئة قد يؤدي إلى فقدان أموالك.
-              </li>
+              <div className="reminder-item">
+                <span>✓</span>
+                راجع عنوان المحفظة جيداً قبل تأكيد التحويل.
+              </div>
 
-            </ul>
+              <div className="reminder-item">
+                <span>✓</span>
+                بعد التحويل، أدخل المبلغ الذي قمت بإرساله.
+              </div>
+
+            </div>
 
           </div>
 
-        </div>
+
+          {/* Security */}
+          <div className="security">
+
+            <span className="lock">
+              
+          
+          </div>
+
+        </section>
 
 
-        <div className="cg-security">
-          🔒 أمان أموالك هو أولويتنا
-        </div>
-
-
+        {/* Back */}
         <a
           href="/dashboard"
-          className="cg-back"
+          className="back-button"
         >
-          الرجوع للوحة التحكم
+          ← العودة إلى لوحة التحكم
         </a>
 
       </main>
@@ -328,303 +422,409 @@ export default function DepositPage() {
           box-sizing: border-box;
         }
 
-        .cg-page {
+
+        .deposit-page {
           min-height: 100vh;
+
           background:
             radial-gradient(
-              circle at 80% 10%,
-              rgba(212,164,45,.12),
-              transparent 30%
+              circle at 50% -10%,
+              rgba(240, 185, 11, 0.12),
+              transparent 35%
             ),
             #050505;
 
-          color: white;
-          padding-bottom: 40px;
+          color: #ffffff;
+
+          padding-bottom: 50px;
+
+          font-family:
+            Arial,
+            Tahoma,
+            sans-serif;
         }
 
 
         /* HEADER */
 
-        .cg-header {
+        .deposit-header {
           height: 70px;
 
           display: flex;
+
           align-items: center;
+
           justify-content: space-between;
 
           padding: 0 18px;
 
+          background: rgba(8, 8, 8, .96);
+
           border-bottom:
-            1px solid rgba(212,164,45,.25);
+            1px solid rgba(240, 185, 11, .22);
         }
 
 
-        .cg-brand {
+        .brand {
           display: flex;
+
           align-items: center;
+
           gap: 10px;
         }
 
 
-        .cg-logo {
+        .brand-icon {
           width: 42px;
           height: 42px;
 
           display: flex;
+
           align-items: center;
+
           justify-content: center;
 
           border:
-            2px solid #d9aa32;
+            1px solid #d7a928;
 
           border-radius: 12px;
 
-          color: #f4c84d;
+          color: #f0b90b;
 
-          font-size: 20px;
+          font-size: 19px;
+
+          box-shadow:
+            0 0 20px rgba(240, 185, 11, .08);
         }
 
 
-        .cg-brand-name {
-          color: #f3c84d;
+        .brand-name {
+          color: #f0b90b;
 
-          font-size: 17px;
+          font-size: 16px;
 
           font-weight: 900;
+
+          letter-spacing: .5px;
         }
 
 
-        .cg-brand-sub {
+        .brand-sub {
           color: #777;
 
-          font-size: 8px;
+          font-size: 7px;
 
           letter-spacing: 2px;
+
+          margin-top: 2px;
         }
 
 
-        .cg-menu {
-          color: #dcb548;
+        .header-title {
+          color: #aaa;
 
-          font-size: 23px;
+          font-size: 13px;
         }
 
 
         /* CONTAINER */
 
-        .cg-container {
-          max-width: 620px;
+        .deposit-container {
+          width: 100%;
+
+          max-width: 560px;
 
           margin: auto;
 
-          padding: 25px 15px;
+          padding: 25px 14px;
         }
 
 
         /* TITLE */
 
-        .cg-title {
+        .page-title {
           text-align: center;
 
-          margin-bottom: 25px;
+          margin-bottom: 24px;
         }
 
 
-        .cg-wallet-icon {
+        .title-icon {
           width: 58px;
           height: 58px;
 
           margin: auto;
 
           display: flex;
-          align-items: center;
-          justify-content: center;
 
-          border:
-            1px solid #d9aa32;
+          align-items: center;
+
+          justify-content: center;
 
           border-radius: 18px;
 
-          color: #f5ca4d;
+          color: #f0b90b;
 
           font-size: 27px;
 
+          border:
+            1px solid rgba(240, 185, 11, .7);
+
+          background:
+            rgba(240, 185, 11, .05);
+
           box-shadow:
-            0 0 30px rgba(212,164,45,.12);
+            0 0 30px rgba(240, 185, 11, .08);
         }
 
 
-        .cg-title h1 {
-          margin: 12px 0 7px;
+        .page-title h1 {
+          margin: 12px 0 6px;
 
-          color: #f4c84d;
+          color: #f0b90b;
 
-          font-size: 40px;
+          font-size: 36px;
 
           font-weight: 900;
         }
 
 
-        .cg-title p {
-          color: #999;
+        .page-title p {
+          margin: 0;
+
+          color: #858585;
 
           font-size: 13px;
-
-          margin: 0;
         }
 
 
         /* CARD */
 
-        .cg-card {
+        .deposit-card {
+          padding: 15px;
+
+          border-radius: 24px;
+
           background:
             linear-gradient(
               145deg,
-              #181818,
+              #151515,
               #090909
             );
 
           border:
-            1px solid rgba(212,164,45,.55);
-
-          border-radius: 24px;
-
-          padding: 17px;
+            1px solid rgba(240, 185, 11, .38);
 
           box-shadow:
-            0 20px 55px rgba(0,0,0,.55);
+            0 25px 70px rgba(0,0,0,.55);
         }
 
 
-        /* OPTIONS */
+        /* INFO GRID */
 
-        .cg-options {
+        .info-grid {
           display: grid;
 
           grid-template-columns: 1fr 1fr;
 
           gap: 10px;
 
-          margin-bottom: 15px;
+          margin-bottom: 12px;
         }
 
 
-        .cg-option {
-          position: relative;
+        .info-box {
+          padding: 14px;
 
-          padding: 15px;
+          border-radius: 15px;
 
           background: #0b0b0b;
 
           border:
-            1px solid rgba(212,164,45,.35);
-
-          border-radius: 16px;
+            1px solid #29230f;
         }
 
 
-        .cg-option span {
+        .info-label {
           display: block;
 
-          color: #777;
+          color: #707070;
 
-          font-size: 12px;
+          font-size: 11px;
 
           margin-bottom: 7px;
         }
 
 
-        .cg-option strong {
+        .info-value {
+          display: flex;
+
+          align-items: center;
+
+          gap: 7px;
+
           color: #eee;
-
-          font-size: 14px;
-        }
-
-
-        /* ADDRESS */
-
-        .cg-address-card {
-          padding: 17px;
-
-          background: #090909;
-
-          border:
-            1px solid rgba(212,164,45,.4);
-
-          border-radius: 18px;
-        }
-
-
-        .cg-label {
-          color: #ccc;
 
           font-size: 14px;
 
           font-weight: 800;
-
-          margin-bottom: 10px;
         }
 
 
-        .cg-label small {
-          color: #777;
+        .network-dot {
+          width: 8px;
+          height: 8px;
+
+          border-radius: 50%;
+
+          background: #f0b90b;
+
+          box-shadow:
+            0 0 8px rgba(240,185,11,.5);
+        }
+
+
+        .usdt-icon {
+          width: 25px;
+          height: 25px;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          border-radius: 50%;
+
+          background: #18a878;
+
+          color: #fff;
+
+          font-size: 13px;
+
+          font-weight: 900;
+        }
+
+
+        /* SECTION */
+
+        .section-box {
+          padding: 16px;
+
+          border-radius: 17px;
+
+          background: #0a0a0a;
+
+          border:
+            1px solid rgba(240, 185, 11, .28);
+
+          margin-top: 12px;
+        }
+
+
+        .section-heading {
+          display: flex;
+
+          align-items: center;
+
+          justify-content: space-between;
+
+          gap: 10px;
+
+          margin-bottom: 10px;
+
+          color: #d5d5d5;
+
+          font-size: 13px;
+
+          font-weight: 800;
+        }
+
+
+        .secure-label {
+          color: #c49b28;
+
+          font-size: 10px;
 
           font-weight: normal;
         }
 
 
-        .cg-address-row {
+        .optional {
+          color: #777;
+
+          font-size: 10px;
+
+          font-weight: normal;
+        }
+
+
+        /* ADDRESS */
+
+        .address-box {
           display: flex;
+
+          align-items: stretch;
 
           gap: 8px;
         }
 
 
-        .cg-address {
+        .address-text {
           flex: 1;
 
           min-width: 0;
 
-          padding: 14px 10px;
+          display: flex;
+
+          align-items: center;
+
+          padding: 13px 10px;
 
           background: #050505;
 
           border:
-            1px solid #594616;
+            1px solid #443611;
 
-          border-radius: 13px;
+          border-radius: 12px;
 
-          color: #eee;
-
-          font-size: 10px;
+          color: #ddd;
 
           direction: ltr;
 
           text-align: left;
 
-          white-space: nowrap;
+          font-size: 10px;
+
+          line-height: 1.4;
 
           overflow: hidden;
+
+          white-space: nowrap;
 
           text-overflow: ellipsis;
         }
 
 
-        .cg-copy {
+        .copy-button {
+          flex-shrink: 0;
+
+          min-width: 65px;
+
           border: none;
 
-          border-radius: 13px;
-
-          padding: 0 15px;
+          border-radius: 12px;
 
           background:
             linear-gradient(
               135deg,
-              #f7d15b,
-              #c69320
+              #f5ce50,
+              #bc8918
             );
 
-          color: #080808;
+          color: #090909;
+
+          font-size: 12px;
 
           font-weight: 900;
 
@@ -632,74 +832,109 @@ export default function DepositPage() {
         }
 
 
-        /* QR */
+        .address-note {
+          color: #666;
 
-        .cg-qr {
-          text-align: center;
+          font-size: 10px;
 
-          margin-top: 20px;
+          margin-top: 8px;
         }
 
 
-        .cg-qr svg {
-          padding: 9px;
+        /* WARNING */
 
-          background: white;
+        .warning-box {
+          display: flex;
+
+          gap: 11px;
+
+          margin-top: 12px;
+
+          padding: 14px;
 
           border-radius: 15px;
+
+          background:
+            rgba(240, 185, 11, .055);
+
+          border:
+            1px solid rgba(240, 185, 11, .20);
         }
 
 
-        .cg-qr p {
-          color: #888;
+        .warning-icon {
+          flex-shrink: 0;
+
+          width: 29px;
+          height: 29px;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          border-radius: 50%;
+
+          border:
+            1px solid #c99c25;
+
+          color: #f0b90b;
+
+          font-weight: 900;
+        }
+
+
+        .warning-title {
+          color: #e3b938;
 
           font-size: 12px;
 
-          line-height: 1.8;
+          font-weight: 900;
 
-          margin: 10px 0 0;
+          margin-bottom: 4px;
+        }
+
+
+        .warning-text {
+          color: #888;
+
+          font-size: 10px;
+
+          line-height: 1.8;
         }
 
 
         /* AMOUNT */
 
-        .cg-amount {
-          margin-top: 15px;
-
-          padding: 17px;
-
-          background: #090909;
-
-          border:
-            1px solid rgba(212,164,45,.4);
-
-          border-radius: 18px;
+        .amount-box {
+          margin-top: 12px;
         }
 
 
-        .cg-input-box {
+        .amount-input-wrapper {
           position: relative;
         }
 
 
-        .cg-input-box input {
+        .amount-input-wrapper input {
           width: 100%;
 
           height: 58px;
 
           padding:
-            0 90px 0 14px;
+            0 88px 0 14px;
+
+          border-radius: 13px;
+
+          border:
+            1px solid #443611;
 
           background: #050505;
 
-          border:
-            1px solid #594616;
-
-          border-radius: 14px;
+          color: #fff;
 
           outline: none;
-
-          color: white;
 
           font-size: 14px;
 
@@ -707,275 +942,232 @@ export default function DepositPage() {
         }
 
 
-        .cg-input-box input:focus {
-          border-color: #d9aa32;
-
-          box-shadow:
-            0 0 15px rgba(212,164,45,.1);
+        .amount-input-wrapper input::placeholder {
+          color: #555;
         }
 
 
-        .cg-usdt {
+        .amount-input-wrapper input:focus {
+          border-color: #d6a72b;
+
+          box-shadow:
+            0 0 18px rgba(240,185,11,.08);
+        }
+
+
+        .currency-badge {
           position: absolute;
 
           right: 7px;
+
           top: 7px;
 
           height: 44px;
 
-          display: flex;
-          align-items: center;
+          padding: 0 10px;
 
-          padding: 0 12px;
+          display: flex;
+
+          align-items: center;
 
           gap: 5px;
 
-          border-radius: 11px;
+          border-radius: 10px;
 
           background: #171207;
 
           border:
-            1px solid #604a17;
+            1px solid #4d3b13;
 
-          color: #f3c84d;
+          color: #e7ba3d;
+
+          font-size: 12px;
 
           font-weight: 900;
         }
 
 
-        .cg-min {
-          margin-top: 8px;
+        .currency-icon {
+          width: 23px;
+          height: 23px;
 
-          color: #888;
+          display: flex;
 
-          font-size: 11px;
+          align-items: center;
+
+          justify-content: center;
+
+          border-radius: 50%;
+
+          background: #18a878;
+
+          color: white;
         }
 
 
-        .cg-min b {
-          color: #dcb548;
+        .minimum-text {
+          margin-top: 8px;
+
+          color: #666;
+
+          font-size: 10px;
+        }
+
+
+        .minimum-text strong {
+          color: #cda633;
         }
 
 
         /* BUTTON */
 
-        .cg-confirm {
+        .deposit-button {
           width: 100%;
 
-          height: 60px;
+          height: 59px;
 
-          margin-top: 18px;
+          margin-top: 14px;
+
+          display: flex;
+
+          align-items: center;
+
+          justify-content: center;
+
+          gap: 7px;
 
           border: none;
+
+          border-radius: 16px;
+
+          background:
+            linear-gradient(
+              135deg,
+              #f6d15a,
+              #bf8e1d
+            );
+
+          color: #080808;
+
+          font-size: 16px;
+
+          font-weight: 900;
+
+          cursor: pointer;
+
+          box-shadow:
+            0 10px 30px rgba(240,185,11,.12);
+
+          transition: .2s;
+        }
+
+
+        .deposit-button:hover {
+          transform: translateY(-2px);
+
+          box-shadow:
+            0 14px 35px rgba(240,185,11,.2);
+        }
+
+
+        .deposit-button:disabled {
+          opacity: .6;
+
+          cursor: not-allowed;
+
+          transform: none;
+        }
+
+
+        .button-arrow {
+          font-size: 20px;
+        }
+
+
+        .spinner {
+          width: 17px;
+          height: 17px;
+
+          border:
+            2px solid rgba(0,0,0,.3);
+
+          border-top-color: #080808;
+
+          border-radius: 50%;
+
+          animation: spin .7s linear infinite;
+        }
+
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+
+        /* MESSAGE */
+
+        .message {
+          margin-top: 12px;
+
+          padding: 12px;
+
+          border-radius: 12px;
+
+          text-align: center;
+
+          color: #f0c64c;
+
+          background:
+            rgba(240,185,11,.06);
+
+          border:
+            1px solid rgba(240,185,11,.20);
+
+          font-size: 11px;
+
+          line-height: 1.7;
+        }
+
+
+        .message.success {
+          color: #58d39b;
+
+          border-color:
+            rgba(88,211,155,.2);
+
+          background:
+            rgba(88,211,155,.05);
+        }
+
+
+        /* REMINDER */
+
+        .reminder {
+          margin-top: 14px;
+
+          padding: 16px;
 
           border-radius: 17px;
 
           background:
             linear-gradient(
               135deg,
-              #f5d05b,
-              #bd8b1b
-            );
-
-          color: #080808;
-
-          font-size: 17px;
-
-          font-weight: 900;
-
-          cursor: pointer;
-
-          transition: .2s;
-        }
-
-
-        .cg-confirm:hover {
-          transform: translateY(-2px);
-
-          box-shadow:
-            0 10px 30px rgba(212,164,45,.25);
-        }
-
-
-        .cg-confirm:disabled {
-          opacity: .6;
-
-          cursor: not-allowed;
-        }
-
-
-        /* MESSAGE */
-
-        .cg-message {
-          margin-top: 15px;
-
-          padding: 13px;
-
-          text-align: center;
-
-          border-radius: 12px;
-
-          color: #f1c84b;
-
-          background:
-            rgba(212,164,45,.07);
-
-          border:
-            1px solid rgba(212,164,45,.25);
-
-          font-size: 13px;
-        }
-
-
-        /* REMINDER */
-
-        .cg-reminder {
-          margin-top: 18px;
-
-          padding: 17px;
-
-          border-radius: 18px;
-
-          background:
-            linear-gradient(
-              135deg,
-              rgba(212,164,45,.09),
-              rgba(10,10,10,.8)
+              rgba(240,185,11,.08),
+              rgba(10,10,10,.9)
             );
 
           border:
-            1px solid rgba(212,164,45,.4);
+            1px solid rgba(240,185,11,.28);
         }
 
 
-        .cg-reminder-title {
+        .reminder-header {
           display: flex;
 
           align-items: center;
 
-          gap: 9px;
+          gap: 10px;
 
-          color: #f2c84b;
-
-          font-size: 16px;
-
-          margin-bottom: 10px;
-        }
-
-
-        .cg-reminder-title span {
-          width: 30px;
-          height: 30px;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          border:
-            1px solid #d9aa32;
-
-          border-radius: 50%;
-
-          font-weight: 900;
-        }
-
-
-        .cg-reminder ul {
-          margin: 0;
-
-          padding-right: 20px;
-
-          color: #999;
-
-          font-size: 12px;
-
-          line-height: 2;
-        }
-
-
-        .cg-reminder li::marker {
-          color: #d9aa32;
-        }
-
-
-        .cg-reminder b {
-          color: #ddd;
-        }
-
-
-        /* FOOTER */
-
-        .cg-security {
-          text-align: center;
-
-          margin-top: 22px;
-
-          color: #999;
-
-          font-size: 13px;
-        }
-
-
-        .cg-back {
-          display: block;
-
-          text-align: center;
-
-          margin-top: 17px;
-
-          color: #777;
-
-          text-decoration: none;
-
-          font-size: 13px;
-        }
-
-
-        .cg-back:hover {
-          color: #dcb548;
-        }
-
-
-        /* MOBILE */
-
-        @media (max-width: 480px) {
-
-          .cg-container {
-            padding: 18px 12px 35px;
-          }
-
-          .cg-title h1 {
-            font-size: 34px;
-          }
-
-          .cg-title p {
-            font-size: 12px;
-          }
-
-          .cg-card {
-            padding: 13px;
-          }
-
-          .cg-option {
-            padding: 13px 10px;
-          }
-
-          .cg-option strong {
-            font-size: 12px;
-          }
-
-          .cg-address {
-            font-size: 9px;
-          }
-
-          .cg-copy {
-            padding: 0 12px;
-          }
-
-        }
-
-      `}</style>
-
-    </div>
-  );
-    }
+          margin-bo
